@@ -1,0 +1,38 @@
+# ------------------------------------------------------
+#
+#       CONFIGURATION FILE OF 1P (134.157.132.123)
+#
+#             For Lightsheet version 4.1
+#
+# ------------------------------------------------------
+
+# --- Images ---
+Camera	PCO.edge 5.5
+Fluo mode	Single
+
+# --- Mirrors & piezo ---
+OP pos	200 µm
+
+HM lower	-0,50 V
+HM higher	0,50 V
+
+HM coeff	975,00 µm/V
+VM coeff	131,00 µm/V
+OP coeff	40,00 µm/V
+
+# --- Light scan ---
+Scan shape	Triangle
+HM Frequency	200,00 Hz
+
+# --- Inputs ---
+Input precision	single
+
+# --- Signals ---
+
+# Settings
+Default	DS1	0
+
+# Slot	Tstart	Duration (all in seconds)
+DS1	0.55	10
+DS1	1.55	100
+DS1	2.55	1000
