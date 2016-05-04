@@ -42,6 +42,7 @@ classdef Lightsheet < handle
         UI = struct();
                 
         Run = [];
+        Parameters
         Signals
         
     end
@@ -134,35 +135,25 @@ classdef Lightsheet < handle
             
             this.GUI('grid', in.grid);
 
-            % --- Load parameters -----------------------------------------
+            % --- Parameters ----------------------------------------------
+            
+            this.Parameters = Parameters;
             
             tmp = userpath;
-            fname = [tmp(1:end-1) filesep 'Config.txt'];
-            if exist(fname, 'file')
-                this.loadParams(fname);
+            ConfName = [tmp(1:end-1) filesep 'Lightsheet' filesep 'Config.txt'];
+            if exist(ConfName, 'file')
+                this.loadParams(ConfName);
             end
             
-            % !!! TEMPORARY !!!
-            this.Signals = struct();
-            this.Signals.DS = struct('tstart', {}, 'tstop', {}, 'default', {});
-            for i = 1
-                this.Signals.DS(i).tstart = 0.55:0.27:45;
-                this.Signals.DS(i).tstop = 0.56:0.27:45;
-                this.Signals.DS(i).default = true;
-            end
-            for i = 2:this.NDS
-                this.Signals.DS(i).tstart = [];
-                this.Signals.DS(i).tstop = [];
-                this.Signals.DS(i).default = false;
-            end
+            % --- Default values & Propagation ----------------------------
             
-            % --- Default values
             this.setFolders('tag', 'All');
             this.refreshRuns();
             this.setPositions('tag', 'All');
             this.setWaveforms('tag', 'All');
             
             % --- Start DAQ session ---------------------------------------
+            
             this.start
             
         end

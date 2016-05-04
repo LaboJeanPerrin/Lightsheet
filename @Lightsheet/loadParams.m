@@ -4,67 +4,37 @@ function loadParams(this, varargin)
 
 try
     p = inputParser;
-    addOptional(p, 'file', '', @ischar);
+    addOptional(p, 'filename', '', @ischar);
     
     parse(p, varargin{:});
     in = p.Results;
 catch
-    in = struct('file', '');
+    in = struct('filename', '');
 end
 
 % === Checks ==============================================================
 
-if isempty(in.file)
+if isempty(in.filename)
      tmp = uigetfile('*.txt', 'Select a parameter file');
      if ischar(tmp)
-        in.file = tmp;
+        in.filename = tmp;
      else
          return
      end
 end
 
-% === File parsing ========================================================
+% === Parameters update ===================================================
 
-% --- Get file content ----------------------------------------------------
-fid = fopen(in.file);
-tmp = textscan(fid, '%s', 'delimiter', '\n');
-fclose(fid);
-File = tmp{1};
+% --- Load
+this.Parameters.load(in.filename);
 
-% --- Parse file ----------------------------------------------------------
+% --- Update
 
-mode = 'Default';
+this.Signals = this.Parameters.Signals;
 
-for i = 1:numel(File)
-    
-    % --- Get line
-    line = File{i};
-    
-    % --- Skip empty lines
-    if isempty(line), continue; end
-    
-    % --- Comments
-    if strcmp(line(1), '#')
-        
-        % Check for the "signals" section
-        res = regexp(line, '# --- (.*) ---', 'tokens');
-        if ~isempty(res) && strcmp(res{1}{1}, 'Signals')
-            mode = 'Signals';
-        end
-        
-        continue;
-    end
-    
-    switch mode
-        
-        case 'Default'
-        
-        case 'Signals'
-        
-            line
-            res = regexp(line, '(\w*)\t(\w*)\t(\w*)', 'tokens');
-            res{1}
-            
-            
-    end
+% Check for sufficient DS lines
+for i = numel(this.Signals.DS)+1:this.NDS
+    this.Signals.DS(i).tstart = [];
+    this.Signals.DS(i).tstop = [];
+    this.Signals.DS(i).default = false;
 end

@@ -33,6 +33,6 @@ Input precision	single
 Default	DS1	0
 
 # Slot	Tstart	Duration (all in seconds)
-DS1	0.55	10
-DS1	1.55	100
-DS1	2.55	1000
+DS1	0.55	0.001
+DS1	1.55	0.01
+DS1	2.55	0.1
