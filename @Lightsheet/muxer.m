@@ -3,6 +3,8 @@ function out = muxer(this, varargin)
 % Start timer
 tic
 
+
+
 % === INITIALIZATION ======================================================
 
 persistent Nb;
@@ -15,6 +17,14 @@ N = this.Session.ScansOutputByHardware;
 if ~N
     out = zeros(this.BlockSize*2, 5+this.NDS);
     Nb = 0;
+    return
+end
+
+% --- ERROR
+if get(this.UI.Error, 'Value')
+    set(this.UI.Error, 'Value', false);
+    out = zeros(this.BlockSize, 5+this.NDS);
+    pause(this.BlockSize/this.Rate);
     return
 end
 
@@ -252,15 +262,22 @@ switch state
             C2 = ts<=t1 & tf>=t1 & tf<=t2;
             C3 = ts>=t1 & ts<=t2 & tf>=t2;
             C4 = ts<=t1 & tf>=t2;
-            I = find(C1 | C2 | C3 | C4);
+            I = find(C1 | C2 | C3 | C4,  1, 'first');
             
             if ~isempty(I)
-                i1 = max(1, round((ts(I(1))-t1)*this.Rate));
-                i2 = min(round((tf(I(1))-t1)*this.Rate), this.BlockSize);
+                i1 = max(1, round((ts(I)-t1)*this.Rate));
+                i2 = min(round((tf(I)-t1)*this.Rate), this.BlockSize);
                 DS(i1:i2,i) = 1-d;
             end
             
         end
+end
+
+% FORCE STIM
+if get(this.UI.Stim, 'Value')
+    tmp = ones(this.BlockSize, 1);
+    tmp(end) = 0;
+    DS(:,1) = tmp;
 end
 
 % === FINALIZATION ========================================================

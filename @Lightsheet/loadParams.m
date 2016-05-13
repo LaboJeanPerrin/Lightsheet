@@ -28,11 +28,12 @@ end
 % --- Load
 this.Parameters.load(in.filename);
 
-% --- Update
+% this.Parameters
 
+% --- Signals
 this.Signals = this.Parameters.Signals;
 
-% Check for sufficient DS lines
+% Fill the empty DS lines
 for i = numel(this.Signals.DS)+1:this.NDS
     this.Signals.DS(i).tstart = [];
     this.Signals.DS(i).tstop = [];

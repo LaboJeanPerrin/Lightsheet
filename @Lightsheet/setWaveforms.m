@@ -269,9 +269,9 @@ d = diff(this.Waveforms.Camera.data(1:this.Waveforms.Camera.nSamples));
 I = [find(d==1)];
 I = [min(I)/50 I];
 J = find(d==-1);
-yL = get(gca, 'Ylim');
+yL = get(A, 'Ylim');
 for i = 1:numel(I)
-    rectangle('Position', [x(I(i)) yL(1)+(yL(2)-yL(1))/100 x(J(i))-x(I(i)) 49*(yL(2)-yL(1))/50], ...
+    rectangle(A, 'Position', [x(I(i)) yL(1)+(yL(2)-yL(1))/100 x(J(i))-x(I(i)) 49*(yL(2)-yL(1))/50], ...
         'Edgecolor', 'none', 'FaceColor', [0.902 0.933 0.8902]);
 end
 

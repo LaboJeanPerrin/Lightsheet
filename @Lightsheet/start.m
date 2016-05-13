@@ -14,7 +14,7 @@ this.DataRequiredListener = addlistener(this.Session, 'DataRequired', ...
     @(src,event) src.queueOutputData(this.muxer));
 
 % Error handling
-this.ErrorListener = addlistener(this.Session, 'ErrorOccurred', @(src,event) disp(event.Error)); 
+this.ErrorListener = addlistener(this.Session, 'ErrorOccurred', @this.Error); 
 
 % Start session
 this.Session.startBackground();
