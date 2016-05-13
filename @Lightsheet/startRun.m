@@ -15,10 +15,16 @@ if get(this.UI.Run, 'Value')
     % Set reference
     this.Reference = double(ceil(N/this.BlockSize)+1)*this.BlockSize/this.Rate;
     
+    % --- Log run start
+    this.log('RUN START');
+    
     % --- Set status
     this.Status = 'Run';
     
 else
+    
+    % --- Log run stop
+    this.log('RUN STOP');
     
     % --- Set status
     this.Status = 'Idle';

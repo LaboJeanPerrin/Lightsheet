@@ -15,6 +15,10 @@ D(1:2) = [];
 Data = {};
 for i = 1:numel(D)
     
+     if ismember(D(i).name, {'log.txt'})
+         continue
+     end
+    
     % Name
     Data{i,1} = D(i).name;
     

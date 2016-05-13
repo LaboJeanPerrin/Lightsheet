@@ -61,8 +61,12 @@ classdef Lightsheet < handle
             clc
             
             % Minimize Matlab's main window
-% % %             mainWindow = com.mathworks.mde.desk.MLDesktop.getInstance.getMainFrame;
-% % %             mainWindow.setMinimized(true);
+            mainWindow = com.mathworks.mde.desk.MLDesktop.getInstance.getMainFrame;
+            mainWindow.setMinimized(true);
+
+            % --- Define block size
+
+            this.BlockSize = floor(this.Rate/10);
 
             % --- Parameters ----------------------------------------------
             tmp = inputParser;
@@ -70,11 +74,6 @@ classdef Lightsheet < handle
             
             parse(tmp, varargin{:});
             in = tmp.Results;
-            
-            % --- DAQ settings --------------------------------------------
-            
-            this.init;
-            this.Memory = struct('HM', 0, 'VM', 0, 'OP', 0, 'Cam', 0, 'Sh', 0, 'DS', zeros(this.NDS,1));
             
             % --- User Interface ------------------------------------------
             % NB: Contain default values for all UI parameters.
@@ -98,8 +97,10 @@ classdef Lightsheet < handle
             this.setPositions('tag', 'All');
             this.setWaveforms('tag', 'All');
             
-            % --- Start DAQ -----------------------------------------------
+            % --- Initialize and start DAQ --------------------------------
             
+            this.init;
+            this.Memory = struct('HM', 0, 'VM', 0, 'OP', 0, 'Cam', 0, 'Sh', 0, 'DS', zeros(this.NDS,1));
             this.start
             
         end

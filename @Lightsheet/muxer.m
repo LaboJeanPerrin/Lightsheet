@@ -3,8 +3,6 @@ function out = muxer(this, varargin)
 % Start timer
 tic
 
-
-
 % === INITIALIZATION ======================================================
 
 persistent Nb;
@@ -69,7 +67,7 @@ switch state
         else
             HM = [this.Waveforms.Horizontal.data(i1:end) this.Waveforms.Horizontal.data(1:i2)]';
         end
-        
+       
 end
 
 % === VERTICAL MIRROR =====================================================
@@ -104,8 +102,8 @@ else
                 
                 if t1 == this.Waveforms.Vertical.CycleTime*NCycles
                     
-                    this.Status = 'Idle';
                     set(this.UI.Run, 'Value', false);
+                    this.startRun();
                     VM = VMPos*ones(this.BlockSize, 1);
                 
                 else
@@ -116,8 +114,8 @@ else
                     
                     % End of run
                     if t1+this.BlockSize*dt >= this.Waveforms.Vertical.CycleTime*NCycles
-                        this.Status = 'Idle';
                         set(this.UI.Run, 'Value', false);
+                        this.startRun();
                         Tw2 = mod(this.Waveforms.Vertical.CycleTime*NCycles, Tw);
                     end
                     
@@ -247,7 +245,7 @@ switch state
     
     case 'Run'
 
-        for i = 1 %:this.NDS
+        for i = 1:this.NDS
             
             % Stimuli times
             ts = this.Signals.DS(i).tstart;

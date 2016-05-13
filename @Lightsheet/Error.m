@@ -1,13 +1,19 @@
 function Error(this, Src, Event)
 
-fprintf('\n------------------- Error detected\n\n');
-disp(Event.Error)
-
 % --- Transitionnal GUI display
 
 set(this.UI.ErrorMessage, 'Visible', 'on');
 
+% --- Error log
+log = 'ERROR';
+log = [log char([13 10 9]) Event.Error.identifier];
+log = [log char([13 10 9]) Event.Error.message];
+
+this.log(log);
+fprintf('~~~ ERROR ~~~\n');
+
 % --- Close DAQ session
+% this.log('Close DAQ session');
 fprintf('Closing DAQ session ...');
 tic
 
@@ -18,8 +24,6 @@ end
 release(this.Session);
 
 fprintf(' %.02f sec\n', toc);
-
-% --- Error log
 
 % --- Restart DAQ session
 this.init;

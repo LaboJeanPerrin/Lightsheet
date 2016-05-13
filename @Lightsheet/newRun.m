@@ -10,8 +10,8 @@ dpath = [get(this.UI.Root, 'String') filesep ...
 if ~exist(dpath, 'dir'), mkdir(dpath); end
 
 % Run path
-D = dir(dpath);
-id = numel(D)-1;
+D = dir([dpath filesep 'Run *']);
+id = numel(D)+1;
 rpath = [dpath filesep 'Run ' num2str(id, '%02i')];
 if ~exist(rpath, 'dir')
     mkdir([rpath filesep 'Images']);

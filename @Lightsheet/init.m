@@ -2,6 +2,7 @@ function init(this, varargin)
 %[Lightsheet].init Initialization of the Lightsheet acquisition
 
 % --- DAQ session
+this.log('Initialize DAQ session');
 fprintf('Initializing DAQ session ...');
 tic
 
@@ -66,7 +67,6 @@ for i = 1:numel(this.Channels)
 end
 
 % --- Misc settings
-this.BlockSize = floor(this.Rate/10);
 this.Session.IsContinuous = true;
 this.Session.NotifyWhenScansQueuedBelow = this.BlockSize;
 

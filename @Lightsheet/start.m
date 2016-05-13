@@ -2,6 +2,7 @@ function start(this, varargin)
 %[Lightsheet].start start the Lightsheet acquisition
 
 % --- DAQ session
+this.log('Start DAQ session');
 fprintf('Starting DAQ session ...');
 tic
 
