@@ -8,12 +8,12 @@ set(this.UI.ErrorMessage, 'Visible', 'on');
 log = 'ERROR';
 log = [log char([13 10 9]) Event.Error.identifier];
 log = [log char([13 10 9]) Event.Error.message];
-
 this.log(log);
+
 fprintf('~~~ ERROR ~~~\n');
 
 % --- Close DAQ session
-% this.log('Close DAQ session');
+this.log('Close DAQ session');
 fprintf('Closing DAQ session ...');
 tic
 

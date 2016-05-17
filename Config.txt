@@ -11,7 +11,9 @@
 #   UNLESS YOU KNOW WHAT YOU'RE DOING     #
 ###########################################
 
-Version 4.1
+# === Header ===================================
+
+Version	4.1
 
 # === Images ===================================
 
@@ -25,43 +27,33 @@ Fluo mode  Single fluo
 # Param    Value  Unit  
 # --------------------
 HM lower   -500   µm    
-HM higher  500    µm    
+HM higher  500    µm
+HM pos     0      µm
 HM coeff   975    µm/V
+VM pos     200    µm
 VM coeff   131    µm/V
+OP pos     200    µm
 OP coeff   40     µm/V  
 
-# --- Mirrors & piezo ---
-OP pos	200 µm
+HM symmetrize	true
 
-HM lower	-0,50 V
-HM higher	0,50 V
+# === Light scan ===============================
 
-HM coeff	975,00 µm/V
-VM coeff	131,00 µm/V
-OP coeff	40,00 µm/V
+# Param     Value        Unit  
+# ---------------------------
+HM mode     Independent        
+Scan shape  Triangle           
+HM rate     200.5        Hz  
 
-# --- Light scan ---
-Scan shape	Triangle
-HM Frequency	200,00 Hz
-
-# --- Inputs ---
-Input precision	single
-
-# --- Signals ---
+# === Signals ==================================
 
 # Settings
-Default	DS1	0
 
-# Slot	Tstart	Duration (all in seconds)
-DS1	120	1
-DS1	240	1
-DS1	360	1
-DS1	480	1
-DS1	600	1
-DS1	720	1
-DS1	840	1
-DS1	960	1
-DS1	1080	1
-DS1	1200	1
+# Tag    Slot  Value  
+# ------------------
+Default  DS1   0      
 
+# Digital Signals
 
+# Slot  Tstart (s)  Duration (s)  
+# ------------------------------

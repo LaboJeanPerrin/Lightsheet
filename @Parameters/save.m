@@ -10,12 +10,11 @@ in = p.Results;
 
 % =========================================================================
 
-% --- File header
-s = ['# ' this.Study ' - ' this.Date ' - ' this.RunName];
-nl();
+% Initalization
+s = '';
 
 % --- Description
-sec('Description');
+sec('Description', '');
 nl();
 add(this.Description);
 nl();
@@ -25,19 +24,14 @@ add('#   DO NOT MODIFY THIS FILE BEYOND THIS POINT  #');
 add('################################################');
 nl();
 
-add(['Version ' this.Version]);
+sec('Header');
 nl();
 
-% add('# ----------------------');
-% add('# UNITS SUMMARY');
-% add('#');
-% add('# Distances: micrometers');
-% add('# Times: milliseconds, except for the "Signals" section (seconds)');
-% add('# Frequencies: Hertz');
-% add('# Analog conversion: micrometers/Volt');
-% add('# Ratios: percentages');
-% add('# ----------------------');
-% nl();
+add(['Version'  char(9) this.Version]);
+add(['Study'    char([9 9]) this.Study]);
+add(['Date'     char([9 9]) this.Date]);
+add(['Run'     char([9 9]) this.RunName]);
+nl();
 
 % --- Images
 sec('Images');
@@ -65,7 +59,7 @@ sec('Light scan');
 
 T = {'HM mode' this.HM_Mode '' ; ...
      'Scan shape' this.HM_Shape '' ; ...
-     'HM Rate' this.HM_Rate 'Hz'};
+     'HM rate' this.HM_Rate 'Hz'};
  
 addTable(T, {'Param' 'Value' 'Unit'});
 
@@ -82,7 +76,7 @@ if str2double(this.NLayers)>1
         'Steps shape' this.StepsShape '' ; ...
         'Increment' this.Increment 'µm' ; ...
         'Stab shape' this.StabShape ''; ...
-        'Stab Ratio' this.StabRatio '%'}];
+        'Stab ratio' this.StabRatio '%'}];
     
 end
 
@@ -157,9 +151,12 @@ fclose(fid);
     end
 
     % --- Add section title
-    function sec(txt)
+    function sec(txt, first)
+        if ~exist('first', 'var')
+            first = char([13 10]); 
+        end
         tmp = ['# === ' txt ' '];
-        s = [s char([13 10]) tmp repmat('=', [1 48-numel(tmp)])];
+        s = [s first tmp repmat('=', [1 48-numel(tmp)])];
     end
 
     % --- Create table

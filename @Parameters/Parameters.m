@@ -1,7 +1,7 @@
 classdef Parameters < handle
 
     properties (Access = public)
-        
+               
         % --- General
         Version
         Study
@@ -16,7 +16,9 @@ classdef Parameters < handle
         % --- Mirrors & piezo
         HM_Position_min
         HM_Position_max
+        HM_Position
         HM_um2V
+        HM_Symmetrize
         
         VM_Position
         VM_um2V
@@ -49,12 +51,21 @@ classdef Parameters < handle
         % --- Signals
         Signals
         
+        % --- Units
+        Units
+        
     end
     
     methods
         
         % --- Constructor -------------------------------------------------
         function this = Parameters(varargin)
+            
+            % Default Units
+            this.Units = struct('Length', 'µm', ...
+                'Time', 'ms', ...
+                'Frequency', 'Hz', ...
+                'Ratio', '%');
             
         end
         

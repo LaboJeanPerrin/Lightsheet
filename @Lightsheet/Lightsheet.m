@@ -61,8 +61,8 @@ classdef Lightsheet < handle
             clc
             
             % Minimize Matlab's main window
-            mainWindow = com.mathworks.mde.desk.MLDesktop.getInstance.getMainFrame;
-            mainWindow.setMinimized(true);
+%             mainWindow = com.mathworks.mde.desk.MLDesktop.getInstance.getMainFrame;
+%             mainWindow.setMinimized(true);
 
             % --- Define block size
 
@@ -79,6 +79,7 @@ classdef Lightsheet < handle
             % NB: Contain default values for all UI parameters.
             
             this.GUI('grid', in.grid);
+            drawnow;
 
             % --- Parameters ----------------------------------------------
             

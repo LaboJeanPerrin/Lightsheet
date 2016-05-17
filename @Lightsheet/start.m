@@ -21,3 +21,6 @@ this.ErrorListener = addlistener(this.Session, 'ErrorOccurred', @this.Error);
 this.Session.startBackground();
 
 fprintf(' %.02f sec\n', toc);
+
+% User interface
+set(this.UI.ErrorMessage, 'Visible', 'off');

@@ -19,11 +19,14 @@ if ~N
 end
 
 % --- ERROR
-if get(this.UI.Error, 'Value')
-    set(this.UI.Error, 'Value', false);
-    out = zeros(this.BlockSize, 5+this.NDS);
-    pause(this.BlockSize/this.Rate);
-    return
+try
+    if get(this.UI.Error, 'Value')
+        set(this.UI.Error, 'Value', false);
+        out = zeros(this.BlockSize, 5+this.NDS);
+        pause(this.BlockSize/this.Rate);
+        return
+    end
+catch
 end
 
 % --- Definitions
@@ -67,7 +70,7 @@ switch state
         else
             HM = [this.Waveforms.Horizontal.data(i1:end) this.Waveforms.Horizontal.data(1:i2)]';
         end
-       
+        
 end
 
 % === VERTICAL MIRROR =====================================================
@@ -76,7 +79,7 @@ if t1<0
     
     % This may happen once when the reference is reset.
     % In this case, let's just wait for the next block.
-    VM = VMPos*ones(this.BlockSize, 1);    
+    VM = VMPos*ones(this.BlockSize, 1);
     
 else
     
@@ -105,7 +108,7 @@ else
                     set(this.UI.Run, 'Value', false);
                     this.startRun();
                     VM = VMPos*ones(this.BlockSize, 1);
-                
+                    
                 else
                     
                     Tw = this.Waveforms.Vertical.NSamples*dt;
@@ -132,7 +135,7 @@ else
                     if numel(VM)<this.BlockSize
                         VM = [VM ; VMPos*ones(this.BlockSize-numel(VM),1)];
                     end
-                
+                    
                 end
             end
     end
@@ -144,7 +147,7 @@ if t1<0
     
     % This may happen once when the reference is reset.
     % In this case, let's just wait for the next block.
-    OP = OPPos*ones(this.BlockSize, 1);    
+    OP = OPPos*ones(this.BlockSize, 1);
     
 else
     
@@ -165,7 +168,7 @@ else
                 if t1 == this.Waveforms.Vertical.CycleTime*NCycles
                     
                     OP = OPPos*ones(this.BlockSize, 1);
-                
+                    
                 else
                     
                     if Tw2>Tw1
@@ -178,7 +181,7 @@ else
                     if numel(OP)<this.BlockSize
                         OP = [OP ; OPPos*ones(this.BlockSize-numel(OP),1)];
                     end
-                
+                    
                 end
             end
     end
@@ -213,7 +216,7 @@ else
                 else
                     Cam = [this.Waveforms.Camera.data(i1:end) this.Waveforms.Camera.data(1:i2)]';
                 end
-                                
+                
                 % End of Run
                 if numel(Cam)<this.BlockSize
                     Cam = [Cam ; zeros(this.BlockSize-numel(Cam),1)];
@@ -244,7 +247,7 @@ end
 switch state
     
     case 'Run'
-
+        
         for i = 1:this.NDS
             
             % Stimuli times
@@ -303,9 +306,9 @@ OP_um2V = str2double(get(this.UI.OP_um2V, 'String'));
 
 % fprintf('%s - %i - %f - %.01fms\n', state, Nb, t1, toc*1000);
 
-try   
+try
     out = [HM/HM_um2V VM/VM_um2V OP/OP_um2V Cam Sh DS];
-catch ME   
+catch ME
     fprintf('Size of HM: %i, %i\n', size(HM));
     fprintf('Size of VM: %i, %i\n', size(VM));
     fprintf('Size of OP: %i, %i\n', size(OP));
