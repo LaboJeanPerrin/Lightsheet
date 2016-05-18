@@ -5,14 +5,14 @@ function load(this, varargin)
 try
     p = inputParser;
     addOptional(p, 'filename', '', @ischar);
-    addParameter(p, 'LengthUnit', this.Units.Length, @(x) ismember(x, {'m', 'mm', 'um', 'µm'}));
+    addParameter(p, 'LengthUnit', this.Units.Length, @(x) ismember(x, {'m', 'mm', 'um', 'ï¿½m'}));
     addParameter(p, 'TimeUnit', this.Units.Time, @(x) ismember(x, {'s', 'ms'}));
     addParameter(p, 'FrequencyUnit', this.Units.Frequency, @(x) ismember(x, {'Hz'}));
     parse(p, varargin{:});
     in = p.Results;
 catch
     in = struct('filename', '', ...
-        'LengthUnit', 'µm', ...
+        'LengthUnit', 'ï¿½m', ...
         'TimeUnit', 'ms', ...
         'FrequencyUnit', 'Hz');
 end
@@ -103,6 +103,17 @@ for i = 1:numel(File)
             res = regexp(line, '^Run\t+(.+)', 'tokens');
             if ~isempty(res)
                 this.RunName = res{1}{1};
+            end
+            
+        case 'Folders'
+            
+            % Root
+            res = regexp(line, '^Root\s+([0-9\.]+)\s+(.*)', 'tokens');
+            if ~isempty(res)
+                [~, hostname] = system('hostname');
+                if strcmp(hostname, res{1}{2})
+                    this.Root = res{1}{2};
+                end
             end
             
         case 'Images'
@@ -326,19 +337,19 @@ switch unit
         switch target
             case 'm', out = val;
             case 'mm', out = val*1e3;
-            case {'um', 'µm'}, out = val*1e6;
+            case {'um', 'ï¿½m'}, out = val*1e6;
         end
     case 'mm'
         switch target
             case 'm', out = val*1e-3;
             case 'mm', out = val;
-            case {'um', 'µm'}, out = val*1e3;
+            case {'um', 'ï¿½m'}, out = val*1e3;
         end
-    case {'um', 'µm'}
+    case {'um', 'ï¿½m'}
         switch target
             case 'm', out = val*1e-6;
             case 'mm', out = val*1e-3;
-            case {'um', 'µm'}, out = val;
+            case {'um', 'ï¿½m'}, out = val;
         end
        
     % --- Coefficients
@@ -346,19 +357,19 @@ switch unit
         switch target
             case 'm/V', out = val;
             case 'mm/V', out = val*1e3;
-            case {'um/V', 'µm/V'}, out = val*1e6;
+            case {'um/V', 'ï¿½m/V'}, out = val*1e6;
         end
     case 'mm/V'
         switch target
             case 'm/V', out = val*1e-3;
             case 'mm/V', out = val;
-            case {'um/V', 'µm/V'}, out = val*1e3;
+            case {'um/V', 'ï¿½m/V'}, out = val*1e3;
         end
-    case {'um/V', 'µm/V'}
+    case {'um/V', 'ï¿½m/V'}
         switch target
             case 'm/V', out = val*1e-6;
             case 'mm/V', out = val*1e-3;
-            case {'um/V', 'µm/V'}, out = val;
+            case {'um/V', 'ï¿½m/V'}, out = val;
         end
      
     % --- Times

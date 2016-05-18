@@ -49,6 +49,8 @@ if ~isempty(this.Parameters.HM_Position)
 end
 
 if ~isempty(this.Parameters.HM_Symmetrize)
+    set(this.UI.HM_symmetrize, 'Value', this.Parameters.HM_Symmetrize);
+end
 
 % --- Acquisition ---------------------------------------------------------
 

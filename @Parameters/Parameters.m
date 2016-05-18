@@ -2,13 +2,16 @@ classdef Parameters < handle
 
     properties (Access = public)
                
-        % --- General
+        % --- Header
         Version
         Study
         Date
         RunName
         Description
 
+        % --- Folders
+        Root
+        
         % --- Images
         CameraModel
         FluoMode
@@ -62,7 +65,7 @@ classdef Parameters < handle
         function this = Parameters(varargin)
             
             % Default Units
-            this.Units = struct('Length', 'µm', ...
+            this.Units = struct('Length', 'ï¿½m', ...
                 'Time', 'ms', ...
                 'Frequency', 'Hz', ...
                 'Ratio', '%');

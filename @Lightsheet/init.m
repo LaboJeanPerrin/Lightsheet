@@ -7,10 +7,11 @@ fprintf('Initializing DAQ session ...');
 tic
 
 % --- Session
-this.Session = daq.createSession('ni');
-
-% --- Rate
-this.Session.Rate = this.Rate;
+try
+    this.Session = daq.createSession('ni');
+catch
+    this.log('Could not initialize the DAQ session.');
+end
 
 % --- Channels
 this.Channels = struct('Type', {}, 'Channel', {}, 'Range', {}, 'Name', {});
@@ -54,20 +55,28 @@ if this.NDS
     this.Channels(6).Name = 'Digital Stimuli';
 end
 
-% Assign channels
-for i = 1:numel(this.Channels)
-    switch this.Channels(i).Type
-        case 'AO'
-            addAnalogOutputChannel(this.Session, this.Device, this.Channels(i).Channel, 'Voltage');
-            this.Session.Channels(i).Range = this.Channels(i).Range;
-        case 'DO'
-            addDigitalChannel(this.Session, this.Device, this.Channels(i).Channel, 'OutputOnly');
+if isa(this.Session, 'ni.daq.Device')
+    
+    % --- Rate
+    this.Session.Rate = this.Rate;
+    
+    
+    % Assign channels
+    for i = 1:numel(this.Channels)
+        switch this.Channels(i).Type
+            case 'AO'
+                addAnalogOutputChannel(this.Session, this.Device, this.Channels(i).Channel, 'Voltage');
+                this.Session.Channels(i).Range = this.Channels(i).Range;
+            case 'DO'
+                addDigitalChannel(this.Session, this.Device, this.Channels(i).Channel, 'OutputOnly');
+        end
+        this.Session.Channels(i).Name = this.Channels(i).Name;
     end
-    this.Session.Channels(i).Name = this.Channels(i).Name;
+    
+    % --- Misc settings
+    this.Session.IsContinuous = true;
+    this.Session.NotifyWhenScansQueuedBelow = this.BlockSize;
+    
 end
-
-% --- Misc settings
-this.Session.IsContinuous = true;
-this.Session.NotifyWhenScansQueuedBelow = this.BlockSize;
 
 fprintf(' %.02f sec\n', toc);

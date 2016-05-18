@@ -82,15 +82,15 @@ classdef Lightsheet < handle
             drawnow;
 
             % --- Parameters ----------------------------------------------
-            
+
             this.Parameters = Parameters;
             
-            tmp = userpath;
-            ConfName = [tmp(1:end-1) filesep 'Lightsheet' filesep 'Config.txt'];
+            tmp = fileparts(fileparts(mfilename('fullpath')));
+            ConfName = [tmp filesep 'Config.txt'];
             if exist(ConfName, 'file')
                 this.loadParams(ConfName);
             end
-            
+
             % --- Default values & Propagation ----------------------------
             
             this.setFolders('tag', 'All');
