@@ -1,9 +1,0 @@
-
-17:49:37 - Initialize DAQ session
-17:54:43 - Initialize DAQ session
-17:57:38 - Initialize DAQ session
-17:57:38 - Start DAQ session
-17:57:48 - Initialize DAQ session
-17:57:48 - Start DAQ session
-18:00:29 - Initialize DAQ session
-18:00:29 - Start DAQ session
