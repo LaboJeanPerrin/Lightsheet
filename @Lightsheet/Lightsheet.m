@@ -90,7 +90,25 @@ classdef Lightsheet < handle
             if exist(ConfName, 'file')
                 this.loadParams(ConfName);
             end
+            
+            % --- Check for the Root folder
+            if isempty(get(this.UI.Root, 'String'))
+                while true
+                    
+                    tmp = inputdlg('Data root directory:', 'Input requested', [1 50]);
+                    
+                    % Cancel > Stop
+                    if isempty(tmp), return; end
+                    
+                    if ~isempty(tmp{1})
+                        set(this.UI.Root, 'String', tmp{1});
+                        break;
+                    end
+                end
+            end
+            
 
+            
             % --- Default values & Propagation ----------------------------
             
             this.setFolders('tag', 'All');

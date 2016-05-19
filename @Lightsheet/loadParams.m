@@ -29,6 +29,12 @@ end
 this.Parameters.load(in.filename);
 this.Parameters
 
+% --- Folders -------------------------------------------------------------
+
+this.UI
+this.Parameters.Root
+set(this.UI.Root, 'String', this.Parameters.Root);
+
 % --- Settings ------------------------------------------------------------
 
 % --- Horizontal Mirror

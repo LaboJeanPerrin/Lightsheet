@@ -10,7 +10,7 @@ classdef Parameters < handle
         Description
 
         % --- Folders
-        Root
+        Root = '';
         
         % --- Images
         CameraModel
@@ -65,7 +65,7 @@ classdef Parameters < handle
         function this = Parameters(varargin)
             
             % Default Units
-            this.Units = struct('Length', 'ï¿½m', ...
+            this.Units = struct('Length', 'µm', ...
                 'Time', 'ms', ...
                 'Frequency', 'Hz', ...
                 'Ratio', '%');

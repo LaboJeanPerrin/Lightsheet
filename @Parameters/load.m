@@ -108,10 +108,11 @@ for i = 1:numel(File)
         case 'Folders'
             
             % Root
-            res = regexp(line, '^Root\s+([0-9\.]+)\s+(.*)', 'tokens');
+            res = regexp(line, '^Root\s+(\S+)\s+(.*)', 'tokens');
             if ~isempty(res)
-                [~, hostname] = system('hostname');
-                if strcmp(hostname, res{1}{2})
+                [~, tmp] = system('hostname');
+                hostname = strtrim(tmp);
+                if strcmp(hostname, res{1}{1})
                     this.Root = res{1}{2};
                 end
             end
@@ -337,19 +338,19 @@ switch unit
         switch target
             case 'm', out = val;
             case 'mm', out = val*1e3;
-            case {'um', 'ï¿½m'}, out = val*1e6;
+            case {'um', 'µm'}, out = val*1e6;
         end
     case 'mm'
         switch target
             case 'm', out = val*1e-3;
             case 'mm', out = val;
-            case {'um', 'ï¿½m'}, out = val*1e3;
+            case {'um', 'µm'}, out = val*1e3;
         end
-    case {'um', 'ï¿½m'}
+    case {'um', 'µm'}
         switch target
             case 'm', out = val*1e-6;
             case 'mm', out = val*1e-3;
-            case {'um', 'ï¿½m'}, out = val;
+            case {'um', 'µm'}, out = val;
         end
        
     % --- Coefficients
@@ -357,19 +358,19 @@ switch unit
         switch target
             case 'm/V', out = val;
             case 'mm/V', out = val*1e3;
-            case {'um/V', 'ï¿½m/V'}, out = val*1e6;
+            case {'um/V', 'µm/V'}, out = val*1e6;
         end
     case 'mm/V'
         switch target
             case 'm/V', out = val*1e-3;
             case 'mm/V', out = val;
-            case {'um/V', 'ï¿½m/V'}, out = val*1e3;
+            case {'um/V', 'µm/V'}, out = val*1e3;
         end
-    case {'um/V', 'ï¿½m/V'}
+    case {'um/V', 'µm/V'}
         switch target
             case 'm/V', out = val*1e-6;
             case 'mm/V', out = val*1e-3;
-            case {'um/V', 'ï¿½m/V'}, out = val;
+            case {'um/V', 'µm/V'}, out = val;
         end
      
     % --- Times
