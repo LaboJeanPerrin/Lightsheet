@@ -1,6 +1,0 @@
-
-Dans Matlab:
-
->> daq.getVendors
-
-Puis cliquer sur "Open the Support Package Installer".

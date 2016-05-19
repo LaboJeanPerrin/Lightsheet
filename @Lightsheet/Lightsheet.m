@@ -81,6 +81,12 @@ classdef Lightsheet < handle
             this.GUI('grid', in.grid);
             drawnow;
 
+            % --- Log file ------------------------------------------------
+            
+            % Prepare the buffer
+            this.log('', 'flush', true);
+            this.log('Open Main window');
+            
             % --- Parameters ----------------------------------------------
 
             this.Parameters = Parameters;
@@ -98,7 +104,10 @@ classdef Lightsheet < handle
                     tmp = inputdlg('Data root directory:', 'Input requested', [1 50]);
                     
                     % Cancel > Stop
-                    if isempty(tmp), return; end
+                    if isempty(tmp)
+                        delete(this.Figures.Main);
+                        return
+                    end
                     
                     if ~isempty(tmp{1})
                         set(this.UI.Root, 'String', tmp{1});
@@ -106,12 +115,13 @@ classdef Lightsheet < handle
                     end
                 end
             end
-            
-
-            
+                        
             % --- Default values & Propagation ----------------------------
             
-            this.setFolders('tag', 'All');
+            if ~this.setFolders('tag', 'All')
+                delete(this.Figures.Main);
+                return
+            end
             this.refreshRuns();
             this.setPositions('tag', 'All');
             this.setWaveforms('tag', 'All');

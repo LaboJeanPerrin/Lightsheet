@@ -1,4 +1,4 @@
-function setFolders(this, varargin)
+function out = setFolders(this, varargin)
 
 % === Inputs ==============================================================
 
@@ -28,7 +28,30 @@ if ismember(in.tag, {'Root', 'All'})
     list = {D(3:end).name};
     list = list([D(3:end).isdir]);
     
-    % Set studies
-    set(this.UI.Study, 'string', list);
+    if isempty(list)
+
+        list = inputdlg(['No study folder could be found in the root path:' char(10) ...
+            root char([10 10]) ...
+            'To create a study folder, input the study name and click "OK".' char(10)], ...
+            'Study', [1 50], ...
+            {'Lightsheet'});
+        
+        if isempty(list)
+            out = false;
+            return
+        end
+            
+        % Create study folder
+        mkdir([root filesep list{1}]);
+        
+    end
     
+    % Set studies
+    set(this.UI.Study, 'String', list);
+    
+end
+
+% --- Ouput
+if nargout
+    out = true;
 end

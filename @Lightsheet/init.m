@@ -10,7 +10,7 @@ tic
 try
     this.Session = daq.createSession('ni');
 catch
-    this.log('Could not initialize the DAQ session.');
+    this.log('Unable to initialize DAQ session. Running in debug mode.');
 end
 
 % --- Channels

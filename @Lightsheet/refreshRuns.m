@@ -1,15 +1,14 @@
 function refreshRuns(this, varargin)
 
 % --- Path
-slist = get(this.UI.Study, 'String')
+slist = get(this.UI.Study, 'String');
 path = [get(this.UI.Root, 'String') filesep ...
     slist{get(this.UI.Study, 'Value')} filesep ...
     get(this.UI.Date, 'String')];
 
-path
 D = dir(path);
 if isempty(D)
-    warning('Lightsheet:EmptyDir', 'Empty directory.');
+%     warning('Lightsheet:EmptyDir', 'Empty directory.');
     return
 end
 D(1:2) = [];

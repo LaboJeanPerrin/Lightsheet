@@ -18,7 +18,7 @@ Version	4.1
 # === Folders ==================================
 
 Root	1P		R:\_RAID_
-# Root	BLACKSTAR	D:\Lightsheet
+Root	BLACKSTAR	D:\Lightsheet
 Root	ghost		/usr/local/DATA/Projects/Lightsheet/Test_Data
 
 # === Images ===================================
