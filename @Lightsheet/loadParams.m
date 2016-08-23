@@ -27,7 +27,7 @@ end
 
 % --- Load
 this.Parameters.load(in.filename);
-this.Parameters
+% this.Parameters
 
 % --- Settings ------------------------------------------------------------
 
@@ -47,8 +47,6 @@ if ~isempty(this.Parameters.HM_Position)
     set(this.UI.HM_Position_slider, 'Value', this.Parameters.HM_Position);
     set(this.UI.HM_Position, 'String', this.Parameters.HM_Position);
 end
-
-if ~isempty(this.Parameters.HM_Symmetrize)
 
 % --- Acquisition ---------------------------------------------------------
 

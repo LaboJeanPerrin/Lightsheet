@@ -26,8 +26,8 @@ Fluo mode  Single fluo
 
 # Param    Value  Unit  
 # --------------------
-HM lower   -500   µm    
-HM higher  500    µm
+HM lower   -600   µm    
+HM higher  600    µm
 HM pos     0      µm
 HM coeff   975    µm/V
 VM pos     200    µm
