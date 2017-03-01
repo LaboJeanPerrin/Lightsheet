@@ -16,6 +16,28 @@ catch
     end
 end
 
+% === Definitions =========================================================
+
+Hmax = str2double(get(this.UI.HM_Position_max, 'String'));
+Hmin = str2double(get(this.UI.HM_Position_min, 'String'));
+Freq = str2double(get(this.UI.HM_Rate, 'String'));
+VMPos = str2double(get(this.UI.VM_Position, 'String'));
+
+Nlayers = str2double(get(this.UI.NLayers, 'String'));
+Increment = str2double(get(this.UI.Increment, 'String'));
+Height = str2double(get(this.UI.Height , 'String'));
+list = get(this.UI.StepsShape, 'String');
+StepsShape = list{get(this.UI.StepsShape, 'Value')};
+
+dt = 1/this.Rate;
+Exposure = str2double(get(this.UI.Exposure, 'String'))/1000;
+Delay = str2double(get(this.UI.Delay, 'String'))/1000;
+DelayLong = str2double(get(this.UI.DelayLong, 'String'))/1000;
+
+Ratio = str2double(get(this.UI.StabRatio, 'String'))/100;
+list = get(this.UI.StabShape, 'String');
+StabShape = list{get(this.UI.StabShape, 'Value')};
+
 % === Checks ==============================================================
 
 % --- Multi-layer fields
@@ -58,13 +80,14 @@ if ismember(in.tag, {'Height'})
 end
 
 % --- Set total height
-if ismember(in.tag, {'NLayers', 'Increment', 'Height', 'All'})
-    
-    NLayers = str2double(get(this.UI.NLayers, 'String'));
-    Increment = str2double(get(this.UI.Increment, 'String'));
-    
-    set(this.UI.Height, 'String', num2str(abs((NLayers-1)*Increment)));
-    
+if ismember(in.tag, {'NLayers', 'StepsShape', 'Increment', 'Height', 'All'})
+
+    if ismember(StepsShape, {'Sawtooth_steps', 'Triangle_steps'})
+        NLayers = str2double(get(this.UI.NLayers, 'String'));
+        Increment = str2double(get(this.UI.Increment, 'String'));
+        set(this.UI.Height, 'String', num2str(abs((NLayers-1)*Increment)));
+    end
+
 end
 
 % --- Set long delay
@@ -101,23 +124,23 @@ if ismember(in.tag, {'NLayers', 'Exposure', 'Delay', 'DelayLong', 'All'})
     
 end
 
+% --- Steps shape
+switch StepsShape
+    
+    case {'Sawtooth steps', 'Triangle steps'}
+        set(this.UI.Increment, 'Enable', 'on');
+        set(this.UI.StabShape, 'Enable', 'on');
+        set(this.UI.StabRatio, 'Enable', 'on');
+        
+    case 'Sawtooth linear'
+        set(this.UI.Increment, 'Enable', 'off');
+        set(this.UI.StabShape, 'Enable', 'off');
+        set(this.UI.StabRatio, 'Enable', 'off');
+end
+
 % === Waveform generation =================================================
 
 this.Waveforms = struct();
-
-% --- Definitions
-
-dt = 1/this.Rate;
-Hmax = str2double(get(this.UI.HM_Position_max, 'String'));
-Hmin = str2double(get(this.UI.HM_Position_min, 'String'));
-Freq = str2double(get(this.UI.HM_Rate, 'String'));
-VMPos = str2double(get(this.UI.VM_Position, 'String'));
-Nlayers = str2double(get(this.UI.NLayers, 'String'));
-Increment = str2double(get(this.UI.Increment, 'String'));
-Exposure = str2double(get(this.UI.Exposure, 'String'))/1000;
-Delay = str2double(get(this.UI.Delay, 'String'))/1000;
-DelayLong = str2double(get(this.UI.DelayLong, 'String'))/1000;
-Ratio = str2double(get(this.UI.StabRatio, 'String'))/100;
 
 % --- Horizontal Waveform
 
@@ -145,6 +168,13 @@ switch get(get(this.UI.HM_Mode, 'SelectedTab'), 'Title')
                 
         end
         
+    case 'Slave'
+        
+        Np_Exposure = round(Exposure/dt);
+        Np_delay = round(Delay/dt);
+        tmp_OneLayer = [Hmin*ones(1,Np_delay) linspace(Hmin, Hmax, Np_Exposure) Hmax*ones(1,Np_delay) linspace(Hmax,Hmin,Np_Exposure)];
+        tmp = repmat(tmp_OneLayer,1,Nlayers);
+        
 end
 
 % BlockSize limitation
@@ -164,25 +194,18 @@ this.Waveforms.Horizontal = struct('dt', dt, ...
 
 % --- Vertical Waveform
 
-% Definitions
-list = get(this.UI.StepsShape, 'String');
-StepsShape = list{get(this.UI.StepsShape, 'Value')};
-
-list = get(this.UI.StabShape, 'String');
-StabShape = list{get(this.UI.StabShape, 'Value')};
-
 % Compute Waveform
 tmp = [];
 
 switch StepsShape
     
-    case 'Sawtooth'
+    case 'Sawtooth_steps'
         
         for j = 1:Nlayers
-        
+            
             % --- Plateau
-            tmp = [tmp Increment*(j-1)*ones(1,round(Exposure/dt))];
-        
+            tmp = [tmp Increment*(j-1)*ones(1, round(Exposure/dt))];
+            
             % --- Movement
             switch StabShape
                 
@@ -206,7 +229,44 @@ switch StepsShape
             
         end
         
-end 
+    case 'Sawtooth_linear'
+
+        tmp = [linspace(0, Height, round((Exposure*Nlayers + Delay*(Nlayers-1))/dt)) ...
+               zeros(1, round(DelayLong/dt))];
+        
+    case 'Triangle_steps'
+        
+        IL = Config.interleave(Nlayers)-1;
+        
+        for j = 1:Nlayers
+            
+            % --- Plateau
+            tmp = [tmp Increment*(IL(j))*ones(1,round(Exposure/dt))];
+            
+            % --- Movement
+            switch StabShape
+                
+                case 'Linear'
+                    
+                    if j<Nlayers
+                        Np = round(Delay/dt);
+                        Nm = round(Np*Ratio);
+                        tmp = [tmp linspace(Increment*IL(j), Increment*IL(j+1), Nm) Increment*IL(j+1)*ones(1,Np-Nm)];
+                    else
+                        if Nlayers==1
+                            Np = round(Delay/dt);
+                            Nm = round(Np*Ratio);
+                        else
+                            Np = round(DelayLong/dt);
+                            Nm = round(Np*Ratio);
+                        end
+                        tmp = [tmp linspace(Increment*IL(j), 0, Nm) zeros(1, Np-Nm)];
+                    end
+            end
+            
+        end
+        
+end
 
 % BlockSize limitation
 if numel(tmp)<=this.BlockSize
@@ -255,25 +315,29 @@ grid(A, 'on');
 xlabel(A, 'Time (s)');
 ylabel(A, 'Position (µm)');
 
-% --- Horizontal Waveform
-% x = (0:this.Waveforms.Horizontal.nSamples-1)*this.Waveforms.Horizontal.dt;
-% h = plot(A, x, this.Waveforms.Horizontal.data(1:this.Waveforms.Horizontal.nSamples), '-', ...
-%     'color', [1 1 1]*0.5);
-
 % --- Vertical Waveform
-x = (0:this.Waveforms.Vertical.nSamples-1)*this.Waveforms.Vertical.dt;
-v = plot(A, x, this.Waveforms.Vertical.data(1:this.Waveforms.Vertical.nSamples) + VMPos, '-');
+xv = (0:this.Waveforms.Vertical.nSamples-1)*this.Waveforms.Vertical.dt;
+v = plot(A, xv, this.Waveforms.Vertical.data(1:this.Waveforms.Vertical.nSamples) + VMPos, '-');
+
+% --- Horizontal Waveform
+% xh = (0:this.Waveforms.Horizontal.nSamples-1)*this.Waveforms.Horizontal.dt;
+% h = plot(A, xh, this.Waveforms.Horizontal.data(1:this.Waveforms.Horizontal.nSamples), '-', ...
+%     'color', [1 1 1]*0.5);
 
 % --- Camera Waveform
 d = diff(this.Waveforms.Camera.data(1:this.Waveforms.Camera.nSamples));
-I = [find(d==1)];
-I = [min(I)/50 I];
+I = find(d==1);
 J = find(d==-1);
+if numel(I)<numel(J)
+    I = [1 I];
+end
 yL = get(A, 'Ylim');
+
 for i = 1:numel(I)
-    rectangle(A, 'Position', [x(I(i)) yL(1)+(yL(2)-yL(1))/100 x(J(i))-x(I(i)) 49*(yL(2)-yL(1))/50], ...
+    rectangle(A, 'Position', [xv(I(i)) yL(1)+(yL(2)-yL(1))/100 xv(J(i))-xv(I(i)) 49*(yL(2)-yL(1))/50], ...
         'Edgecolor', 'none', 'FaceColor', [0.902 0.933 0.8902]);
 end
 
+% --- Manage plot overlays
 % uistack(h, 'top');
 uistack(v, 'top');

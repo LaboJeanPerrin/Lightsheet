@@ -15,9 +15,9 @@ end
 % === Checks ==============================================================
 
 if isempty(in.filename)
-     tmp = uigetfile('*.txt', 'Select a parameter file');
+     [tmp, pname] = uigetfile('*.txt', 'Select a parameter file');
      if ischar(tmp)
-        in.filename = tmp;
+        in.filename = [pname tmp];
      else
          return
      end

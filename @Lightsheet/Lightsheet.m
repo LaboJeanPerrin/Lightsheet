@@ -7,7 +7,7 @@ classdef Lightsheet < handle
 % - Load parameters
 % - Vert traj: Continuous Sawtooth 
 %
-% - Shortcut
+% - Shortcuts
 % - Display status
 % - Remaining time
 % - Close shutter after run
@@ -52,7 +52,7 @@ classdef Lightsheet < handle
         % --- Constructor -------------------------------------------------
         function this = Lightsheet(varargin)
             
-            % --- Clean interface
+            % --- Cleanup the interface
             
             % Close existing occurences of Lightsheet
             close all
@@ -80,7 +80,6 @@ classdef Lightsheet < handle
             
             this.GUI('grid', in.grid);
             drawnow;
-            
             
             % --- Parameters ----------------------------------------------
             

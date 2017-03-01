@@ -309,6 +309,7 @@ OP_um2V = str2double(get(this.UI.OP_um2V, 'String'));
 try
     out = [HM/HM_um2V VM/VM_um2V OP/OP_um2V Cam Sh DS];
 catch ME
+    
     fprintf('Size of HM: %i, %i\n', size(HM));
     fprintf('Size of VM: %i, %i\n', size(VM));
     fprintf('Size of OP: %i, %i\n', size(OP));

@@ -26,8 +26,8 @@ Fluo mode  Single fluo
 
 # Param    Value  Unit  
 # --------------------
-HM lower   -600   µm    
-HM higher  600    µm
+HM lower   -610   µm    
+HM higher  610    µm
 HM pos     0      µm
 HM coeff   975    µm/V
 VM pos     200    µm
@@ -44,6 +44,19 @@ HM symmetrize	true
 HM mode     Independent        
 Scan shape  Triangle           
 HM rate     200.5        Hz  
+
+# === Layers ===================================
+
+# Param           Value     Unit  
+# ------------------------------
+Number of layers  10              
+Exposure          40        ms    
+Delay             10        ms    
+DelayLong         10        ms    
+Steps shape       Sawtooth steps       
+Increment         8         µm    
+Stab shape        Linear          
+Stab ratio        50        %     
 
 # === Signals ==================================
 

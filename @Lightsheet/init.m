@@ -34,14 +34,14 @@ this.Channels(3).Channel = 2;
 this.Channels(3).Range = [-10 10];
 
 % Camera
+this.Channels(4).Name = 'Camera';
 this.Channels(4).Type = 'DO';
 this.Channels(4).Channel = 'Port0/Line0';
-this.Channels(4).Name = 'Camera';
 
 % Shutter
+this.Channels(5).Name = 'Shutter';
 this.Channels(5).Type = 'DO';
 this.Channels(5).Channel = 'Port0/Line1';
-this.Channels(5).Name = 'Shutter';
 
 % Digital stimuli
 if this.NDS
