@@ -18,9 +18,10 @@ screen = get(0,'screensize');
 bb = 40;
 th = 30;
 
-pos = screen + [-screen(3)-1 bb 0 -bb-th];          % Fullscreen, left screen
+pos = screen;                                     % Fullscreen, right screen
+% pos = screen + [-screen(3)-1 bb 0 -bb-th];        % Fullscreen, left screen
 % pos = pos + [0 0 -pos(3)/2 0];                    % Left panel
-pos = pos + [0 pos(4)/2 -pos(3)/2 -pos(4)/2];       % Top-left corner
+pos = pos + [0 pos(4)/2 -pos(3)/2 -pos(4)/2];     % Top-left corner
 
 set(this.Figures.Main, 'Position', pos);
 
@@ -553,7 +554,7 @@ uicontrol(Tab_Settings, 'Style', 'text', 'HorizontalAlignment', 'right', ...
 % Path
 this.UI.Root = uicontrol(Tab_Settings, 'Style', 'edit', ...
     'Tag', 'Root', ...
-    'String', 'R:\_RAID_', ...
+    'String', '', ...
     'HorizontalAlignment', 'left', ...
     'Position', [xPath+70 yPath+50 405 20]);
 
@@ -567,7 +568,7 @@ uicontrol(Tab_Settings, 'Style', 'text', 'HorizontalAlignment', 'right', ...
 % Study
 this.UI.Study = uicontrol(Tab_Settings, 'Style', 'popupmenu', ...
     'Tag', 'Study', ...
-    'String', {'-', '--'}, ...
+    'String', {'-'}, ...
     'Position', [xPath+70 yPath+20 150 20]);
 
 % --- Date
@@ -884,7 +885,7 @@ Html = '<html><body style="background: rgb(52,69,87);">';
 Html = [Html '<div style="height: 100px;">&nbsp;</div>'];
 Html = [Html '<center><span>'];
 Html = [Html '<p style="font-family: Arial; font-size:18px; color: white; margin-bottom: 30px;">Loading DAQ control</p>'];
-Html = [Html '<img src="file:' fileparts(fileparts(mfilename('fullpath'))) '\Icons\spinner.gif" width="200" height="150">'];
+Html = [Html '<img src="file:' fileparts(fileparts(mfilename('fullpath'))) filesep 'Icons' filesep 'spinner.gif" width="200" height="150">'];
 Html = [Html '</span></center>'];
 Html = [Html '</body></html>'];
  

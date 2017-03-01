@@ -83,17 +83,41 @@ classdef Lightsheet < handle
             
             % --- Parameters ----------------------------------------------
             
+            % --- Parameters ----------------------------------------------
+
             this.Parameters = Parameters;
             
-            tmp = userpath;
-            ConfName = [tmp(1:end-1) filesep 'Lightsheet' filesep 'Config.txt'];
+            tmp = fileparts(fileparts(mfilename('fullpath')));
+            ConfName = [tmp filesep 'Config.txt'];
             if exist(ConfName, 'file')
                 this.loadParams(ConfName);
             end
             
+            % --- Check for the Root folder
+            if isempty(get(this.UI.Root, 'String'))
+                while true
+                    
+                    tmp = inputdlg('Data root directory:', 'Input requested', [1 50]);
+                    
+                    % Cancel > Stop
+                    if isempty(tmp)
+                        delete(this.Figures.Main);
+                        return
+                    end
+                    
+                    if ~isempty(tmp{1})
+                        set(this.UI.Root, 'String', tmp{1});
+                        break;
+                    end
+                end
+            end
+                        
             % --- Default values & Propagation ----------------------------
             
-            this.setFolders('tag', 'All');
+            if ~this.setFolders('tag', 'All')
+                delete(this.Figures.Main);
+                return
+            end
             this.refreshRuns();
             this.setPositions('tag', 'All');
             this.setWaveforms('tag', 'All');
