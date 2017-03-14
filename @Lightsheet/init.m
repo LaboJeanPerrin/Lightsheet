@@ -55,7 +55,7 @@ if this.NDS
     this.Channels(6).Name = 'Digital Stimuli';
 end
 
-if isa(this.Session, 'ni.daq.Device')
+if isa(this.Session, 'ni.daq.Device') || isa(this.Session, 'daq.ni.Session')
     
     % --- Rate
     this.Session.Rate = this.Rate;

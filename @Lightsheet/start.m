@@ -1,7 +1,7 @@
 function start(this, varargin)
 %[Lightsheet].start start the Lightsheet acquisition
 
-if isa(this.Session, 'ni.daq.Device')
+if isa(this.Session, 'ni.daq.Device') || isa(this.Session, 'daq.ni.Session')
     
     % --- DAQ session
     this.log('Start DAQ session');

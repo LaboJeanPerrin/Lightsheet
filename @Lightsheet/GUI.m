@@ -12,16 +12,12 @@ set(this.Figures.Main, 'menubar', 'none');
 set(this.Figures.Main, 'units', 'pixel');
 set(this.Figures.Main, 'CloseRequestFcn', @this.stop);
 
-% Get screen size
-set(0,'units','pixels')  
-screen = get(0,'screensize');
+% Set window position
+set(0,'units','pixels') ;
+monitors = get(0, 'MonitorPositions');
+screen = monitors(2,:);
 bb = 40;
-th = 30;
-
-pos = screen;                                     % Fullscreen, right screen
-% pos = screen + [-screen(3)-1 bb 0 -bb-th];        % Fullscreen, left screen
-% pos = pos + [0 0 -pos(3)/2 0];                    % Left panel
-pos = pos + [0 pos(4)/2 -pos(3)/2 -pos(4)/2];     % Top-left corner
+pos = [screen(1) screen(4)/2+bb screen(2)+screen(3)/2 screen(4)/2-bb];
 
 set(this.Figures.Main, 'Position', pos);
 

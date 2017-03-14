@@ -80,14 +80,13 @@ classdef Lightsheet < handle
             
             this.GUI('grid', in.grid);
             drawnow;
-            
-            % --- Parameters ----------------------------------------------
-            
+                                    
             % --- Parameters ----------------------------------------------
 
             this.Parameters = Parameters;
             
             tmp = fileparts(fileparts(mfilename('fullpath')));
+            
             ConfName = [tmp filesep 'Config.txt'];
             if exist(ConfName, 'file')
                 this.loadParams(ConfName);
@@ -126,7 +125,7 @@ classdef Lightsheet < handle
             
             this.init;
             this.Memory = struct('HM', 0, 'VM', 0, 'OP', 0, 'Cam', 0, 'Sh', 0, 'DS', zeros(this.NDS,1));
-            this.start
+            this.start;
             
         end
     end
