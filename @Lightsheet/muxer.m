@@ -211,8 +211,17 @@ else
                 
             else
                 
+                 Tw = this.Waveforms.Camera.NSamples*dt;
+                 Tw1 = mod(t1, Tw);
+                 Tw2 = mod(Tw1 + this.BlockSize*dt, Tw);
+                    
+                 i1 = round(Tw1/dt)+1;
+                 i2 = round(Tw2/dt);
+                
                 if Tw2>Tw1
+                    
                     Cam = this.Waveforms.Camera.data(i1:i2)';
+                                        
                 else
                     Cam = [this.Waveforms.Camera.data(i1:end) this.Waveforms.Camera.data(1:i2)]';
                 end
@@ -221,7 +230,6 @@ else
                 if numel(Cam)<this.BlockSize
                     Cam = [Cam ; zeros(this.BlockSize-numel(Cam),1)];
                 end
-                
                 
             end
     end

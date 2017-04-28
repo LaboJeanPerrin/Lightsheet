@@ -17,7 +17,7 @@ Version	4.1
 
 # === Folders ==================================
 
-Root	1P	R:\_RAID_
+Root	1P	R:
 Root	BLACKSTAR	D:\Lightsheet
 Root	ghost	/usr/local/DATA/Projects/Lightsheet/Test_Data
 
@@ -37,7 +37,7 @@ HM higher  610    µm
 HM pos     0      µm
 HM coeff   975    µm/V
 VM pos     200    µm
-VM coeff   131    µm/V
+VM coeff   193    µm/V
 OP pos     200    µm
 OP coeff   40     µm/V  
 

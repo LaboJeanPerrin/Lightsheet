@@ -80,11 +80,10 @@ classdef Lightsheet < handle
             
             this.GUI('grid', in.grid);
             drawnow;
-                                    
+
             % --- Parameters ----------------------------------------------
 
             this.Parameters = Parameters;
-            
             tmp = fileparts(fileparts(mfilename('fullpath')));
             
             ConfName = [tmp filesep 'Config.txt'];
@@ -110,19 +109,21 @@ classdef Lightsheet < handle
                     end
                 end
             end
-                        
+                     
             % --- Default values & Propagation ----------------------------
             
             if ~this.setFolders('tag', 'All')
                 delete(this.Figures.Main);
                 return
             end
-            this.refreshRuns();
+            
+            % this.refreshRuns();
             this.setPositions('tag', 'All');
-            this.setWaveforms('tag', 'All');
+            this.setWaveforms('tag', 'StepsShape');
+            this.setTiming('tag', 'All');
             
             % --- Initialize and start DAQ --------------------------------
-            
+                        
             this.init;
             this.Memory = struct('HM', 0, 'VM', 0, 'OP', 0, 'Cam', 0, 'Sh', 0, 'DS', zeros(this.NDS,1));
             this.start;

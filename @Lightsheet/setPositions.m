@@ -98,7 +98,9 @@ if ismember(in.tag, {'HM_Position_max', 'HM_Position_min', 'HM_um2V', 'All'})
     set(this.UI.HM_Position_slider, 'Min', pmin, 'Max', pmax);
     
     % Update waveforms
-    this.setWaveforms
+    if ~ismember(in.tag, {'All'})
+        this.setWaveforms;
+    end
 
 end
 

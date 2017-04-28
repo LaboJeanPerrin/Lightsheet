@@ -82,7 +82,7 @@ end
 % --- Set total height
 if ismember(in.tag, {'NLayers', 'StepsShape', 'Increment', 'Height', 'All'})
 
-    if ismember(StepsShape, {'Sawtooth_steps', 'Triangle_steps'})
+    if ismember(StepsShape, {'Sawtooth steps', 'Triangle steps'})
         NLayers = str2double(get(this.UI.NLayers, 'String'));
         Increment = str2double(get(this.UI.Increment, 'String'));
         set(this.UI.Height, 'String', num2str(abs((NLayers-1)*Increment)));
@@ -93,8 +93,8 @@ end
 % --- Set long delay
 if ismember(in.tag, {'Delay', 'DelayLong', 'All'})
     
-    Delay = str2double(get(this.UI.Delay, 'String'));
-    DelayLong = str2double(get(this.UI.DelayLong, 'String'));
+    Delay = str2double(get(this.UI.Delay, 'String'))/1000;
+    DelayLong = str2double(get(this.UI.DelayLong, 'String'))/1000;
     
     if DelayLong<Delay
         DelayLong = Delay;
@@ -106,11 +106,11 @@ end
 % --- Coerce stabilization ratio
 if ismember(in.tag, {'StabRatio', 'All'})
     
-    Ratio = str2double(get(this.UI.StabRatio, 'String'));
+    Ratio = str2double(get(this.UI.StabRatio, 'String'))/100;
     
     if Ratio<0
         set(this.UI.StabRatio, 'String', '0');
-    elseif Ratio>100
+    elseif Ratio>1
         set(this.UI.StabRatio, 'String', '100');
     end
     
@@ -199,8 +199,8 @@ tmp = [];
 
 switch StepsShape
     
-    case 'Sawtooth_steps'
-        
+    case 'Sawtooth steps'
+                
         for j = 1:Nlayers
             
             % --- Plateau
@@ -213,7 +213,7 @@ switch StepsShape
                     
                     if j<Nlayers
                         Np = round(Delay/dt);
-                        Nm = round(Np*Ratio);
+                        Nm = round(Np*Ratio);                       
                         tmp = [tmp linspace(Increment*(j-1), Increment*j, Nm) Increment*j*ones(1,Np-Nm)];
                     else
                         if Nlayers==1
@@ -225,16 +225,36 @@ switch StepsShape
                         end
                         tmp = [tmp linspace(Increment*(j-1), 0, Nm) zeros(1,Np-Nm)];
                     end
+                    
+                case 'Parabolic'
+                                        
+                    if j<Nlayers
+                        Np = round(Delay/dt);
+                        Nm = round(Np*Ratio);
+                        t_ = linspace(0,1,Nm);
+                        tmp = [tmp Increment*(j-1)+Increment*t_.*(2-t_) Increment*j*ones(1,Np-Nm)];
+                        
+                    else
+                        if Nlayers==1
+                            Np = round(Delay/dt);
+                            Nm = round(Np*Ratio);
+                        else
+                            Np = round(DelayLong/dt);
+                            Nm = round(Np*Ratio);
+                        end
+                        t_ = linspace(0,1,Nm);
+                        tmp = [tmp Increment*(j-1)*(1-t_.*(2-t_)) zeros(1,Np-Nm)];
+                    end
             end
             
         end
         
-    case 'Sawtooth_linear'
+    case 'Sawtooth linear'
 
         tmp = [linspace(0, Height, round((Exposure*Nlayers + Delay*(Nlayers-1))/dt)) ...
                zeros(1, round(DelayLong/dt))];
         
-    case 'Triangle_steps'
+    case 'Triangle steps'
         
         IL = Config.interleave(Nlayers)-1;
         
