@@ -18,8 +18,8 @@ end
 
 % === Definitions =========================================================
 
-Hmax = str2double(get(this.UI.HM_Position_max, 'String'));
 Hmin = str2double(get(this.UI.HM_Position_min, 'String'));
+Hmax = str2double(get(this.UI.HM_Position_max, 'String'));
 Freq = str2double(get(this.UI.HM_Rate, 'String'));
 VMPos = str2double(get(this.UI.VM_Position, 'String'));
 
@@ -33,6 +33,8 @@ dt = 1/this.Rate;
 Exposure = str2double(get(this.UI.Exposure, 'String'))/1000;
 Delay = str2double(get(this.UI.Delay, 'String'))/1000;
 DelayLong = str2double(get(this.UI.DelayLong, 'String'))/1000;
+DelayBefore = str2double(get(this.UI.DelayBefore, 'String'))/1000;
+DelayAfter = str2double(get(this.UI.DelayAfter, 'String'))/1000;
 
 Ratio = str2double(get(this.UI.StabRatio, 'String'))/100;
 list = get(this.UI.StabShape, 'String');
@@ -127,15 +129,31 @@ end
 % --- Steps shape
 switch StepsShape
     
-    case {'Sawtooth steps', 'Triangle steps'}
+    case 'Sawtooth steps'
         set(this.UI.Increment, 'Enable', 'on');
         set(this.UI.StabShape, 'Enable', 'on');
         set(this.UI.StabRatio, 'Enable', 'on');
+        set(this.UI.DelayLong, 'Enable', 'on');
         
-    case 'Sawtooth linear'
+    case 'Triangle steps'
+        set(this.UI.Increment, 'Enable', 'on');
+        set(this.UI.StabShape, 'Enable', 'on');
+        set(this.UI.StabRatio, 'Enable', 'on');
+        set(this.UI.DelayLong, 'Enable', 'off');
+        
+    case 'Sawtooth'
         set(this.UI.Increment, 'Enable', 'off');
         set(this.UI.StabShape, 'Enable', 'off');
         set(this.UI.StabRatio, 'Enable', 'off');
+        set(this.UI.DelayLong, 'Enable', 'on');
+        
+    case 'Triangle'
+        set(this.UI.Increment, 'Enable', 'off');
+        set(this.UI.StabShape, 'Enable', 'off');
+        set(this.UI.StabRatio, 'Enable', 'off');
+        set(this.UI.DelayLong, 'Enable', 'off');
+
+        
 end
 
 % === Waveform generation =================================================
@@ -170,11 +188,22 @@ switch get(get(this.UI.HM_Mode, 'SelectedTab'), 'Title')
         
     case 'Slave'
         
-        Np_Exposure = round(Exposure/dt);
-        Np_delay = round(Delay/dt);
-        tmp_OneLayer = [Hmin*ones(1,Np_delay) linspace(Hmin, Hmax, Np_Exposure) Hmax*ones(1,Np_delay) linspace(Hmax,Hmin,Np_Exposure)];
-        tmp = repmat(tmp_OneLayer,1,Nlayers);
+        tmp = [];
+        Nb = round(DelayBefore/dt);
+        Na = round(DelayAfter/dt);
+        Nt = round(Exposure/dt)-Nb-Na;
+        Np = round(Delay/dt);
         
+        % All steps
+        for j = 1:Nlayers
+            tmp = [tmp Hmin*ones(1,Nb) linspace(Hmin, Hmax, Nt) Hmax*ones(1,Na) linspace(Hmax, Hmin, Np)];
+        end
+            
+        % Long delay?
+        if strcmp(get(this.UI.DelayLong, 'Enable'), 'on')
+            tmp = [tmp Hmin*ones(1, round(DelayLong/dt)-Np)];
+        end
+                
 end
 
 % BlockSize limitation
@@ -249,11 +278,6 @@ switch StepsShape
             
         end
         
-    case 'Sawtooth linear'
-
-        tmp = [linspace(0, Height, round((Exposure*Nlayers + Delay*(Nlayers-1))/dt)) ...
-               zeros(1, round(DelayLong/dt))];
-        
     case 'Triangle steps'
         
         IL = Config.interleave(Nlayers)-1;
@@ -273,13 +297,8 @@ switch StepsShape
                         Nm = round(Np*Ratio);
                         tmp = [tmp linspace(Increment*IL(j), Increment*IL(j+1), Nm) Increment*IL(j+1)*ones(1,Np-Nm)];
                     else
-                        if Nlayers==1
-                            Np = round(Delay/dt);
-                            Nm = round(Np*Ratio);
-                        else
-                            Np = round(DelayLong/dt);
-                            Nm = round(Np*Ratio);
-                        end
+                        Np = round(Delay/dt);
+                        Nm = round(Np*Ratio);
                         tmp = [tmp linspace(Increment*IL(j), 0, Nm) zeros(1, Np-Nm)];
                     end
                     
@@ -293,13 +312,8 @@ switch StepsShape
                         tmp = [tmp Increment*IL(j)+d*Increment*t_.*(2-t_) Increment*IL(j+1)*ones(1,Np-Nm)];
                         
                     else
-                        if Nlayers==1
-                            Np = round(Delay/dt);
-                            Nm = round(Np*Ratio);
-                        else
-                            Np = round(DelayLong/dt);
-                            Nm = round(Np*Ratio);
-                        end
+                        Np = round(Delay/dt);
+                        Nm = round(Np*Ratio);
                         t_ = linspace(0,1,Nm);
                         tmp = [tmp Increment*IL(j)*(1-t_.*(2-t_)) zeros(1,Np-Nm)];
                     end
@@ -307,6 +321,24 @@ switch StepsShape
             
         end
         
+    case 'Sawtooth'
+
+        tmp = [linspace(0, Height, round((Exposure*Nlayers + Delay*(Nlayers-1))/dt)) ...
+               zeros(1, round(DelayLong/dt))];
+
+    case 'Triangle'
+
+        if mod(Nlayers,2)
+            Nup = (Nlayers-1)/2;
+            Ndown = (Nlayers+1)/2;
+        else 
+            Nup = Nlayers/2;
+            Ndown = Nlayers/2;
+        end
+        
+        tmp = circshift([linspace(0, Height, round((Exposure*Nup + Delay*(Nup))/dt)) ...
+               linspace(Height, 0, round((Exposure*Ndown + Delay*(Ndown))/dt))], -round(Delay/dt));
+
 end
 
 % BlockSize limitation
@@ -324,9 +356,64 @@ this.Waveforms.Vertical = struct('dt', dt, ...
     'CycleTime', numel(tmp)*dt, ...
     'WfmTime', numel(Tmp)*dt);
 
+% --- Shutter Waveform
+
+% Compute Waveform
+
+switch get(get(this.UI.HM_Mode, 'SelectedTab'), 'Title')
+    
+    case 'Independent'
+        
+        tmp = ones(1, this.Waveforms.Vertical.NSamples);
+        
+    case 'Slave'
+        
+        tmp = [];
+        Nb = round(DelayBefore/dt);
+        Na = round(DelayAfter/dt);
+        Nt = round(Exposure/dt)-Nb-Na;
+        Np = round(Delay/dt);
+            
+         % All steps
+        for j = 1:Nlayers
+            tmp = [tmp zeros(1,Nb) ones(1, Nt) zeros(1,Na+Np)];
+        end
+            
+        % Long delay?
+        if strcmp(get(this.UI.DelayLong, 'Enable'), 'on')
+            tmp = [tmp zeros(1, round(DelayLong/dt)-Np)];
+        end
+            
+end
+
+% BlockSize limitation
+if numel(tmp)<=this.BlockSize
+    Tmp = repmat(tmp, [1 ceil(this.BlockSize/numel(tmp))]);
+else
+    Tmp = tmp;
+end
+
+% Store Waveform
+this.Waveforms.Shutter = struct('dt', dt, ...
+    'data', Tmp, ...
+    'nSamples', numel(tmp), ...
+    'NSamples', numel(Tmp), ...
+    'CycleTime', numel(tmp)*dt, ...
+    'WfmTime', numel(Tmp)*dt);
+
 % --- Camera Waveform
+
+% Compute
+
 tmp = [];
-for j = 1:Nlayers
+
+for j = 1:Nlayers-1
+    tmp = [tmp ones(1,round(Exposure/dt)) zeros(1,round(Delay/dt))];
+end
+
+if strcmp(get(this.UI.DelayLong, 'Enable'), 'on')
+    tmp = [tmp ones(1,round(Exposure/dt)) zeros(1,round(DelayLong/dt))];
+else
     tmp = [tmp ones(1,round(Exposure/dt)) zeros(1,round(Delay/dt))];
 end
 
@@ -349,22 +436,51 @@ this.Waveforms.Camera = struct('dt', dt, ...
 
 % --- Axes
 A = this.UI.Waveforms;
-cla(A);
+cla(A, 'reset');
 hold(A, 'on');
 box(A, 'on');
 grid(A, 'on');
 xlabel(A, 'Time (s)');
 ylabel(A, 'Position (µm)');
 
+% --- Shutter mask
+shm = this.Waveforms.Shutter.data(1:this.Waveforms.Vertical.nSamples);
+shm_ = 1-shm;
+shm(shm==0) = NaN;
+shm_(shm_==0) = NaN;
+
 % --- Vertical Waveform
 xv = (0:this.Waveforms.Vertical.nSamples-1)*this.Waveforms.Vertical.dt;
-v = plot(A, xv, this.Waveforms.Vertical.data(1:this.Waveforms.Vertical.nSamples) + VMPos, '-');
+yv = this.Waveforms.Vertical.data(1:this.Waveforms.Vertical.nSamples) + VMPos;
 
-% --- Horizontal Waveform
-% xh = (0:this.Waveforms.Horizontal.nSamples-1)*this.Waveforms.Horizontal.dt;
-% h = plot(A, xh, this.Waveforms.Horizontal.data(1:this.Waveforms.Horizontal.nSamples), '-', ...
-%     'color', [1 1 1]*0.5);
+plot(A, xv, yv.*shm, '-', 'color', [0 115 189]/255);
+plot(A, xv, yv.*shm_, ':', 'color', [0 115 189]/255);
 
+if get(this.UI.DispHM, 'Value')
+
+    % --- Horizontal Waveform
+    xh = (0:this.Waveforms.Horizontal.nSamples-1)*this.Waveforms.Horizontal.dt;
+    yh = this.Waveforms.Horizontal.data(1:this.Waveforms.Horizontal.nSamples);
+    
+    % Replicate and crop (for display only)
+    Nrep = ceil(max(xv)/max(xh));
+    xh = (0:this.Waveforms.Horizontal.nSamples*Nrep-1)*this.Waveforms.Horizontal.dt;    
+    yh = repmat(yh, [1, Nrep]);
+    I = 1:find(xh<=xv(end),1,'last');
+    
+    xh = xh(1:numel(shm));
+    yh_ = yh(1:numel(shm_)).*shm_;
+    yh = yh(1:numel(shm)).*shm;
+    
+    % Plot
+    yyaxis right    
+    plot(A, xh(I), yh(I), '-', 'color', [1 1 1]*0.6);
+    plot(A, xh(I), yh_(I), ':', 'color', [1 1 1]*0.6);
+    set(A.YAxis(2), 'color', [1 1 1]*0.6);
+    yyaxis left
+    
+end
+       
 % --- Camera Waveform
 d = diff(this.Waveforms.Camera.data(1:this.Waveforms.Camera.nSamples));
 I = find(d==1);
@@ -372,6 +488,7 @@ J = find(d==-1);
 if numel(I)<numel(J)
     I = [1 I];
 end
+
 yL = get(A, 'Ylim');
 
 for i = 1:numel(I)
@@ -379,6 +496,15 @@ for i = 1:numel(I)
         'Edgecolor', 'none', 'FaceColor', [0.902 0.933 0.8902]);
 end
 
-% --- Manage plot overlays
-% uistack(h, 'top');
-uistack(v, 'top');
+% --- Misc
+
+% Fix font size
+set(A, 'fontsize', 8);
+
+% Manage plot overlays
+
+% NB: As of R2017a, uistack produces a strange error when used with yyaxis.
+% uistack(v, 'top');
+
+% Workaround:
+set(A, 'Children', circshift(get(A, 'Children'), 2));

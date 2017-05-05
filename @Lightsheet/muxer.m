@@ -237,11 +237,60 @@ end
 
 % === SHUTTER =============================================================
 
-if get(this.UI.Shutter, 'Value')
-    Sh = ones(this.BlockSize, 1);
-    Sh(end) = 0;
-else
+if t1<0
+    
+    % This may happen once when the reference is reset.
+    % In this case, let's just wait for the next block.
     Sh = zeros(this.BlockSize, 1);
+    
+else
+    
+    switch state
+        
+        case {'Idle', 'Scan'}
+            
+            if get(this.UI.Shutter, 'Value')
+                Sh = ones(this.BlockSize, 1);
+                Sh(end) = 0;
+            else
+                Sh = zeros(this.BlockSize, 1);
+            end
+            
+        case 'Run'
+            
+            if t1 == this.Waveforms.Vertical.CycleTime*NCycles
+                
+                if get(this.UI.Shutter, 'Value')
+                    Sh = ones(this.BlockSize, 1);
+                    Sh(end) = 0;
+                else
+                    Sh = zeros(this.BlockSize, 1);
+                end
+                
+            else
+                
+                 Tw = this.Waveforms.Shutter.NSamples*dt;
+                 Tw1 = mod(t1, Tw);
+                 Tw2 = mod(Tw1 + this.BlockSize*dt, Tw);
+                    
+                 i1 = round(Tw1/dt)+1;
+                 i2 = round(Tw2/dt);
+                
+                if Tw2>Tw1
+                    
+                    Sh = this.Waveforms.Shutter.data(i1:i2)';
+                                        
+                else
+                    Sh = [this.Waveforms.Shutter.data(i1:end) this.Waveforms.Shutter.data(1:i2)]';
+                end
+                
+                % End of Run
+                if numel(Sh)<this.BlockSize
+                    Sh = [Sh ; zeros(this.BlockSize-numel(Sh),1)];
+                end
+                
+            end
+    end
 end
 
 % === DIGITAL STIMULI =====================================================

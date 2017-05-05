@@ -80,7 +80,7 @@ classdef Lightsheet < handle
             
             this.GUI('grid', in.grid);
             drawnow;
-
+            
             % --- Parameters ----------------------------------------------
 
             this.Parameters = Parameters;
