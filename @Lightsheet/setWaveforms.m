@@ -282,6 +282,27 @@ switch StepsShape
                         end
                         tmp = [tmp linspace(Increment*IL(j), 0, Nm) zeros(1, Np-Nm)];
                     end
+                    
+                case 'Parabolic'
+                         
+                    if j<Nlayers
+                        Np = round(Delay/dt);
+                        Nm = round(Np*Ratio);
+                        t_ = linspace(0,1,Nm);
+                        d = IL(j+1)-IL(j);
+                        tmp = [tmp Increment*IL(j)+d*Increment*t_.*(2-t_) Increment*IL(j+1)*ones(1,Np-Nm)];
+                        
+                    else
+                        if Nlayers==1
+                            Np = round(Delay/dt);
+                            Nm = round(Np*Ratio);
+                        else
+                            Np = round(DelayLong/dt);
+                            Nm = round(Np*Ratio);
+                        end
+                        t_ = linspace(0,1,Nm);
+                        tmp = [tmp Increment*IL(j)*(1-t_.*(2-t_)) zeros(1,Np-Nm)];
+                    end
             end
             
         end
