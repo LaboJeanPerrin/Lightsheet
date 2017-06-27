@@ -32,6 +32,7 @@ end
 % --- Find the log file
 slist = get(this.UI.Study, 'String');
 slist = setdiff(slist, 'System Volume Information');
+
 if isempty(get(this.UI.Root, 'String')) || isempty(slist)
     
     buffer = [buffer logtxt];
@@ -41,7 +42,7 @@ else
     path = [get(this.UI.Root, 'String') filesep ...
         slist{get(this.UI.Study, 'Value')} filesep ...
         get(this.UI.Date, 'String')];
-
+    
     % --- Create log file ?
     if ~exist(path, 'dir')
         mkdir(path);
