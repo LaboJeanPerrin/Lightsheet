@@ -124,7 +124,7 @@ classdef Lightsheet < handle
             this.setTiming('tag', 'All');
             
             % --- Initialize and start DAQ --------------------------------
-                   
+
             this.init;
             this.Memory = struct('HM', 0, 'VM', 0, 'OP', 0, 'Cam', 0, 'Sh', 0, 'DS', zeros(this.NDS,1));
             this.start;

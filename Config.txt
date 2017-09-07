@@ -17,15 +17,17 @@ Version	4.1
 
 # === Folders ==================================
 
-Root	1P	R:
+Root	1P	R:\
 Root	BLACKSTAR	D:\Lightsheet
+Root	RLS	S:\
 Root	ghost	/usr/local/DATA/Projects/Lightsheet/Test_Data
+
 
 # === Images ===================================
 
 # Param    Value         
 # ---------------------
-Camera     PCO.edge 5.5  
+Camera     Hamamatsu ORCA Flash 4.0
 Fluo mode  Single fluo   
 
 # === Mirrors & piezo ==========================

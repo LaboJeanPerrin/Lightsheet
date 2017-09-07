@@ -33,7 +33,13 @@ this.log(['Load parameter file (' in.filename ')']);
 switch this.Parameters.Version
 
     case '4.1'
-
+        
+        % --- Camera model ------------------------------------------------
+        
+        if ~isempty(this.Parameters.CameraModel)
+            set(this.UI.Model, 'String', this.Parameters.CameraModel);
+        end
+        
         % --- Folders -----------------------------------------------------
         
         if ~isempty(this.Parameters.Root)
