@@ -1,8 +1,7 @@
 function Error(this, Src, Event)
 
 % --- Transitionnal GUI display
-
-set(this.UI.ErrorMessage, 'Visible', 'on');
+this.DaqDisable(true);
 
 % --- Error log
 log = 'ERROR';
@@ -11,6 +10,7 @@ log = [log char([13 10 9]) Event.Error.message];
 this.log(log);
 
 fprintf('~~~ ERROR ~~~\n');
+fprintf('%s\n', Event.Error.message);
 
 % --- Close DAQ session
 this.log('Close DAQ session');
@@ -30,4 +30,4 @@ this.init;
 this.start;
 
 % --- Back to normal GUI display
-set(this.UI.ErrorMessage, 'Visible', 'off');
+this.DaqDisable(false);

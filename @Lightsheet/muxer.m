@@ -338,6 +338,21 @@ if get(this.UI.Stim, 'Value')
     DS(:,1) = tmp;
 end
 
+% === CORRECTIONS =========================================================
+
+% --- Get vertical correction
+if ~isempty(this.vi)
+    vCorr = this.vi.GetControlValue('VertCorrection');
+else
+    vCorr = 0;
+end
+
+% Update display
+set(this.UI.CorrVert, 'string', num2str(vCorr, '%.02f'));
+
+% --- Apply vertical correction
+VC = linspace(this.Memory.vCorr, vCorr, this.BlockSize)';
+
 % === FINALIZATION ========================================================
 
 % --- Update memory
@@ -347,6 +362,7 @@ this.Memory.OP = OP(end);
 this.Memory.Cam = Cam(end);
 this.Memory.Sh = Sh(end);
 this.Memory.DS = DS(end,:);
+this.Memory.vCorr = vCorr;
 
 % --- Vertical mirror inversion
 if get(this.UI.VM_Invert, 'Value')
@@ -364,7 +380,7 @@ OP_um2V = str2double(get(this.UI.OP_um2V, 'String'));
 % fprintf('%s - %i - %f - %.01fms\n', state, Nb, t1, toc*1000);
 
 try
-    out = [HM/HM_um2V VM/VM_um2V OP/OP_um2V Cam Sh DS];
+    out = [HM/HM_um2V (VM+VC)/VM_um2V (OP+VC)/OP_um2V Cam Sh DS];
 catch ME
     
     fprintf('Size of HM: %i, %i\n', size(HM));
@@ -376,3 +392,5 @@ catch ME
     
     rethrow(ME);
 end
+
+% fprintf('%i,%i - %.03f s\n', size(HM), toc);

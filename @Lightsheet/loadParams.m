@@ -37,7 +37,11 @@ switch this.Parameters.Version
         % --- Camera model ------------------------------------------------
         
         if ~isempty(this.Parameters.CameraModel)
-            set(this.UI.Model, 'String', this.Parameters.CameraModel);
+            list = get(this.UI.Model, 'String');
+            [~, cI] = ismember(this.Parameters.CameraModel, list);
+            if ~isempty(cI)
+                set(this.UI.Model, 'value', cI);
+            end
         end
         
         % --- Folders -----------------------------------------------------

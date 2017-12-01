@@ -6,11 +6,14 @@ this.log('Initialize DAQ session');
 fprintf('Initializing DAQ session ...');
 tic
 
+this.DaqDisable(true);
+
 % --- Session
 try
     this.Session = daq.createSession('ni');
 catch
     this.log('Unable to initialize DAQ session. Running in debug mode.');
+    this.DaqDisable(false);
 end
 
 % --- Channels
@@ -75,7 +78,7 @@ if isa(this.Session, 'ni.daq.Device') || isa(this.Session, 'daq.ni.Session')
     
     % --- Misc settings
     this.Session.IsContinuous = true;
-    this.Session.NotifyWhenScansQueuedBelow = this.BlockSize;
+    this.Session.NotifyWhenScansQueuedBelow = this.BlockSize*2;
     
 end
 

@@ -21,6 +21,11 @@ if get(this.UI.Run, 'Value')
     % --- Set status
     this.Status = 'Run';
     
+    % Check vi state
+    if ~isempty(this.vi)
+        this.vi.SetControlValue('Trig', true);
+    end
+    
 else
     
     % --- Log run stop
@@ -30,3 +35,4 @@ else
     this.Status = 'Idle';
     
 end
+

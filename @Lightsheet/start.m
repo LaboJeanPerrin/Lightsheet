@@ -27,4 +27,6 @@ if isa(this.Session, 'ni.daq.Device') || isa(this.Session, 'daq.ni.Session')
 end
 
 % User interface
-set(this.UI.ErrorMessage, 'Visible', 'off');
+this.DaqDisable(false);
+
+% set(this.UI.ErrorMessage, 'Visible', 'off');

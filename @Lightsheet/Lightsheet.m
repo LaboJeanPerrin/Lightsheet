@@ -31,7 +31,7 @@ classdef Lightsheet < handle
         Memory
         Reference = 0;
         Status = 'Idle';
-        NDS = 8;                        % Number of Digital Stimuli
+        NDS = 1;                        % Number of Digital Stimuli
         
         Session
         Channels
@@ -44,6 +44,8 @@ classdef Lightsheet < handle
         Run = [];
         Parameters
         Signals
+        
+        vi = [];
         
     end
     
@@ -90,7 +92,7 @@ classdef Lightsheet < handle
             if exist(ConfName, 'file')
                 this.loadParams(ConfName);
             end
-            
+                        
             % --- Check for the Root folder
             if isempty(get(this.UI.Root, 'String'))
                 while true
@@ -109,7 +111,7 @@ classdef Lightsheet < handle
                     end
                 end
             end
-
+                        
             % --- Default values & Propagation ----------------------------
             
             if ~this.setFolders('tag', 'All')
@@ -126,7 +128,7 @@ classdef Lightsheet < handle
             % --- Initialize and start DAQ --------------------------------
 
             this.init;
-            this.Memory = struct('HM', 0, 'VM', 0, 'OP', 0, 'Cam', 0, 'Sh', 0, 'DS', zeros(this.NDS,1));
+            this.Memory = struct('HM', 0, 'VM', 0, 'OP', 0, 'Cam', 0, 'Sh', 0, 'DS', zeros(this.NDS,1), 'vCorr', 0);
             this.start;
             
         end
