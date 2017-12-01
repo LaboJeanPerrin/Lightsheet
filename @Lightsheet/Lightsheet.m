@@ -31,7 +31,7 @@ classdef Lightsheet < handle
         Memory
         Reference = 0;
         Status = 'Idle';
-        NDS = 1;                        % Number of Digital Stimuli
+        NDS = 2;                        % Number of Digital Stimuli
         
         Session
         Channels

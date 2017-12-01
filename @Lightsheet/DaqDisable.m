@@ -41,4 +41,5 @@ set(this.UI.OP_Center, 'Enable', str);
 set(this.UI.OP_m1, 'Enable', str);
 set(this.UI.OP_m10, 'Enable', str);
 set(this.UI.OP_m100, 'Enable', str);
-set(this.UI.Stim, 'Enable', str);
+set(this.UI.Stim_1, 'Enable', str);
+set(this.UI.Stim_2, 'Enable', str);

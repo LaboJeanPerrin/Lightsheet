@@ -332,11 +332,18 @@ switch state
 end
 
 % FORCE STIM
-if get(this.UI.Stim, 'Value')
+if get(this.UI.Stim_1, 'Value')
     tmp = ones(this.BlockSize, 1);
     tmp(end) = 0;
     DS(:,1) = tmp;
 end
+
+if get(this.UI.Stim_2, 'Value')
+    tmp = ones(this.BlockSize, 1);
+    tmp(end) = 0;
+    DS(:,2) = tmp;
+end
+
 
 % === CORRECTIONS =========================================================
 
