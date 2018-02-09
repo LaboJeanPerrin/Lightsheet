@@ -25,8 +25,8 @@ if ismember(in.tag, {'Root', 'All'})
     
     % Get Studies
     D = dir(root);
-    list = {D(3:end).name};
-    list = setdiff(list([D(3:end).isdir]), 'System Volume Information');
+    list = {D(:).name};
+    list = setdiff(list([D(:).isdir]), {'System Volume Information', '$RECYCLE.BIN', 'Recovery', '-'});
     
     if isempty(list)
 
