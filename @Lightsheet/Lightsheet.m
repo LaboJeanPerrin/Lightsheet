@@ -1,28 +1,8 @@
 classdef Lightsheet < handle
     
-% TO DO:
-% - Signals
-% - Run management (create folder, run list etc.)
-% - Save parameters
-% - Load parameters
-% - Vert traj: Continuous Sawtooth 
-%
-% - Shortcuts
-% - Display status
-% - Remaining time
-% - Close shutter after run
-% - Steps shape: add "Triangle"
-% - Add other
-%
-% - Help
-% - Documentation
-% - Tooltips
-% - Window manager: position, which tab is in front
-% - Button appearance
-    
     properties (Access = public)
         
-        Version = '4.1';
+        Version = '4.2';
         
         Device = 'Dev1';
         Rate = 100000;
@@ -86,13 +66,21 @@ classdef Lightsheet < handle
             % --- Parameters ----------------------------------------------
 
             this.Parameters = Parameters;
-            tmp = fileparts(fileparts(mfilename('fullpath')));
             
-            ConfName = [tmp filesep 'Config.txt'];
+            ConfName = [prefdir filesep 'Lightsheet_Config.txt'];            
             if exist(ConfName, 'file')
                 this.loadParams(ConfName);
+            else
+                TempName = [fileparts(mfilename('fullpath')) filesep 'TEMPLATE_Config.txt'];
+                copyfile(TempName, ConfName);
+                
+                fprintf('Please edit the configuration file and restart the program.\n');
+                fprintf('\n\t--------------------------\n\n');
+                edit(ConfName);
+                return
+                
             end
-                        
+                              
             % --- Check for the Root folder
             if isempty(get(this.UI.Root, 'String'))
                 while true

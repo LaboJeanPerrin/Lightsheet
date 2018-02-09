@@ -1,0 +1,79 @@
+# ------------------------------------------------------
+#
+#       CONFIGURATION FILE OF 1P (134.157.132.123)
+#
+#             For Lightsheet version 4.1
+#
+# ------------------------------------------------------
+
+###########################################
+#        DO NOT MODIFY THIS FILE          #
+#   UNLESS YOU KNOW WHAT YOU'RE DOING     #
+###########################################
+
+# === Header ===================================
+
+Version	4.1
+
+# === Folders ==================================
+
+Root	1P	R:
+Root	BLACKSTAR	D:\Lightsheet
+Root	ghost	/usr/local/DATA/Projects/Lightsheet/Test_Data
+
+# === Images ===================================
+
+# Param    Value         
+# ---------------------
+Camera     PCO.edge 5.5  
+Fluo mode  Single fluo   
+
+# === Mirrors & piezo ==========================
+
+# Param    Value  Unit  
+# --------------------
+HM lower   -610   µm    
+HM higher  610    µm
+HM pos     0      µm
+HM coeff   975    µm/V
+VM pos     200    µm
+VM coeff   193    µm/V
+OP pos     200    µm
+OP coeff   40     µm/V  
+
+HM symmetrize	true
+
+# === Light scan ===============================
+
+# Param     Value        Unit  
+# ---------------------------
+HM mode     Independent        
+Scan shape  Triangle           
+HM rate     200.5        Hz  
+
+# === Layers ===================================
+
+# Param           Value     Unit  
+# ------------------------------
+Number of layers  10              
+Exposure          40        ms    
+Delay             10        ms    
+DelayLong         10        ms    
+Steps shape       Sawtooth steps       
+Increment         8         µm    
+Stab shape        Linear          
+Stab ratio        50        %     
+
+# === Signals ==================================
+
+# Settings
+
+# Tag    Slot  Value  
+# ------------------
+Default  DS1   0      
+Default  DS2   0      
+
+# Digital Signals
+
+# Slot  Tstart (s)  Duration (s)  
+# ------------------------------

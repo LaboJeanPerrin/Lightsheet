@@ -46,6 +46,9 @@ if strcmp(this.Status, 'Idle') && get(this.UI.HM_Scan, 'Value')
     state = 'Scan';
 end
 
+% Initialization shift
+if t1<0, state = 'Idle'; end
+
 % === HORIZONTAL MIRROR ===================================================
 
 switch state

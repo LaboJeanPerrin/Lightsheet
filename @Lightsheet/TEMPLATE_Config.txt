@@ -1,8 +1,8 @@
 # ------------------------------------------------------
 #
-#       CONFIGURATION FILE OF 1P (134.157.132.123)
+#       CONFIGURATION FILE OF ... (IP adress)
 #
-#             For Lightsheet version 4.1
+#             For Lightsheet version 4.2
 #
 # ------------------------------------------------------
 
@@ -13,17 +13,19 @@
 
 # === Header ===================================
 
-Version	4.1
+Version	4.2
 
 # === Folders ==================================
 
-Root	1P	R:\
-Root	BLACKSTAR	D:\Lightsheet
-Root	RLS	S:\
-Root	ghost	/usr/local/DATA/Projects/Lightsheet/Test_Data
-
+DataRoot    R:
 
 # === Images ===================================
+
+# Possible values for Camera are:
+# Hamamatsu ORCA Flash 4.0
+# PCO.edge 4.2
+# PCO.edge 5.5
+# Other
 
 # Param    Value         
 # ---------------------
@@ -72,9 +74,5 @@ Stab ratio        50        %
 
 # Tag    Slot  Value  
 # ------------------
-Default  DS1   0      
-
-# Digital Signals
-
-# Slot  Tstart (s)  Duration (s)  
-# ------------------------------
+Default  DS1   0
+Default  DS2   0

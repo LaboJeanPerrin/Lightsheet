@@ -13,7 +13,7 @@ if get(this.UI.Run, 'Value')
     if ~N, return; end
     
     % Set reference
-    this.Reference = double(ceil(N/this.BlockSize)+1)*this.BlockSize/this.Rate;
+    this.Reference = double(ceil(N/this.BlockSize)+1)*this.BlockSize/this.Rate + 2*this.BlockSize/this.Rate;
     
     % --- Log run start
     this.log('RUN START');
