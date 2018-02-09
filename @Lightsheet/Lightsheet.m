@@ -61,7 +61,7 @@ classdef Lightsheet < handle
             % NB: Contain default values for all UI parameters.
             
             this.GUI('grid', in.grid);
-            drawnow;
+            
                         
             % --- Parameters ----------------------------------------------
 
@@ -80,6 +80,10 @@ classdef Lightsheet < handle
                 return
                 
             end
+            
+            % --- Update screen
+            this.GUI('UpdateScreen');
+            drawnow;
                               
             % --- Check for the Root folder
             if isempty(get(this.UI.Root, 'String'))

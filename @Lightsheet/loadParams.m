@@ -27,7 +27,7 @@ end
 
 % --- Load
 this.Parameters.load(in.filename);
-this.log(['Load parameter file (' in.filename ')']);
+% this.log(['Load parameter file (' in.filename ')']);
 
 % --- Version Warning
 switch this.Parameters.Version

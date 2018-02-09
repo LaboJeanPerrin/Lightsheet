@@ -26,8 +26,10 @@ if ismember(in.tag, {'Root', 'All'})
     % Get Studies
     D = dir(root);
     list = {D(:).name};
-    list = setdiff(list([D(:).isdir]), {'System Volume Information', '$RECYCLE.BIN', 'Recovery', '-'});
-    
+    list = setdiff(list([D(:).isdir]), ...
+        {'System Volume Information', '$RECYCLE.BIN', 'Recovery'});
+    list(cellfun(@(x) x(1)=='.' || x(1)=='-', list)) = [];
+   
     if isempty(list)
 
         list = inputdlg(['No study folder could be found in the root path:' newline ...
