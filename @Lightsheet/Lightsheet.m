@@ -61,8 +61,7 @@ classdef Lightsheet < handle
             % NB: Contain default values for all UI parameters.
             
             this.GUI('grid', in.grid);
-            
-                        
+                   
             % --- Parameters ----------------------------------------------
 
             this.Parameters = Parameters;

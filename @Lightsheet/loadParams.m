@@ -124,6 +124,22 @@ switch this.Parameters.Version
             set(this.UI.HM_symmetrize, 'Value', this.Parameters.HM_Symmetrize);
         end
         
+        if ~isempty(this.Parameters.HM_um2V)
+            set(this.UI.HM_um2V, 'String', this.Parameters.HM_um2V);
+        end
+        
+        % --- Vertical Mirror
+        
+        if ~isempty(this.Parameters.VM_um2V)
+            set(this.UI.VM_um2V, 'String', this.Parameters.VM_um2V);
+        end
+        
+        % --- Objective piezo
+        
+        if ~isempty(this.Parameters.OP_um2V)
+            set(this.UI.OP_um2V, 'String', this.Parameters.OP_um2V);
+        end
+        
         % --- Signals -----------------------------------------------------
         this.Signals = this.Parameters.Signals;
         
