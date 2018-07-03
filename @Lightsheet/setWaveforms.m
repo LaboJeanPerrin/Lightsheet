@@ -441,8 +441,7 @@ hold(A, 'on');
 box(A, 'on');
 grid(A, 'on');
 xlabel(A, 'Time (s)');
-ylabel(A, 'Position (µm)');
-
+ylabel(A, 'Position (ï¿½m)');
 % --- Shutter mask
 shm = this.Waveforms.Shutter.data(1:this.Waveforms.Vertical.nSamples);
 shm_ = 1-shm;

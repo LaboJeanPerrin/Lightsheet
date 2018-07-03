@@ -2,7 +2,7 @@ classdef Lightsheet < handle
     
     properties (Access = public)
         
-        Version = '4.2';
+        Version = '4.3';
         
         Device = 'Dev1';
         Rate = 100000;
