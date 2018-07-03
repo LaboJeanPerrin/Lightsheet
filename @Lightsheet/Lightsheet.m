@@ -64,7 +64,7 @@ classdef Lightsheet < handle
                    
             % --- Parameters ----------------------------------------------
 
-            this.Parameters = Parameters;
+            this.Parameters = NT.Parameters;
             
             ConfName = [prefdir filesep 'Lightsheet_Config.txt'];            
             if exist(ConfName, 'file')
