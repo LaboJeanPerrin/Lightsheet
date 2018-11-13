@@ -22,19 +22,19 @@ this.Channels = struct('Type', {}, 'Channel', {}, 'Range', {}, 'Name', {});
 % Horizontal mirror
 this.Channels(1).Name = 'HM';
 this.Channels(1).Type = 'AO';
-this.Channels(1).Channel = 0;
+this.Channels(1).Channel = 2;
 this.Channels(1).Range = [-5 5];
 
 % Vertical Mirror
 this.Channels(2).Name = 'VM';
 this.Channels(2).Type = 'AO';
-this.Channels(2).Channel = 1;
-this.Channels(2).Range = [-5 5];
+this.Channels(2).Channel = 3;
+this.Channels(2).Range = [-10 10];
 
 % Objective Piezo
 this.Channels(3).Name = 'OP';
 this.Channels(3).Type = 'AO';
-this.Channels(3).Channel = 2;
+this.Channels(3).Channel = 1;
 this.Channels(3).Range = [-10 10];
 
 % Camera
@@ -45,7 +45,7 @@ this.Channels(4).Channel = 'Port0/Line0';
 % Shutter
 this.Channels(5).Name = 'Shutter';
 this.Channels(5).Type = 'DO';
-this.Channels(5).Channel = 'Port0/Line1';
+this.Channels(5).Channel = 'Port0/Line8';
 
 % Digital stimuli
 if this.NDS

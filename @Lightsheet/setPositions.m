@@ -20,6 +20,18 @@ end
 
 % === Checks ==============================================================
 
+% --- Coefficients
+ 
+if ismember(in.tag, {'All'})
+ 
+    set(this.UI.HM_um2V, 'String', num2str(this.Parameters.HM_um2V));
+ 
+    set(this.UI.VM_um2V, 'String', num2str(this.Parameters.VM_um2V));
+ 
+    set(this.UI.OP_um2V, 'String', num2str(this.Parameters.OP_um2V));
+ 
+end
+
 % --- HM position
 
 % From slider

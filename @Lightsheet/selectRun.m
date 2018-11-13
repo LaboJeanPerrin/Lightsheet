@@ -9,7 +9,7 @@ if isnumeric(varargin{1})
     this.Run = struct('Id', id, 'Name', ['Run ' num2str(id, '%02i')]);
     
 else
-
+    
     if isempty(varargin{2}.Indices), return; end
     
     % Get identifier
@@ -23,6 +23,12 @@ end
 % Set run path
 slist = get(this.UI.Study, 'String');
 this.Run.Path = [get(this.UI.Root, 'String') filesep ...
-             slist{get(this.UI.Study, 'Value')} filesep ...
-             get(this.UI.Date, 'String') filesep ...
-             this.Run.Name];
+    slist{get(this.UI.Study, 'Value')} filesep ...
+    get(this.UI.Date, 'String') filesep ...
+    this.Run.Name];
+
+if ~isempty(this.vi)
+    
+    this.vi.SetControlValue('Run selected', this.Run.Name );
+    
+end

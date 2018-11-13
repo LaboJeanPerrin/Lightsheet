@@ -31,6 +31,12 @@ else
     % --- Log run stop
     this.log('RUN STOP');
     
+        % Check vi state
+    if ~isempty(this.vi)
+        this.vi.SetControlValue('Trig', false);
+    end
+
+    
     % --- Set status
     this.Status = 'Idle';
     
