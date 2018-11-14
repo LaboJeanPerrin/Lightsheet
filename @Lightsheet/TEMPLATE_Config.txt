@@ -2,7 +2,7 @@
 #
 #       CONFIGURATION FILE OF ... (IP adress)
 #
-#             For Lightsheet version 4.2
+#             For Lightsheet version 4.3
 #
 # ------------------------------------------------------
 
@@ -13,7 +13,7 @@
 
 # === Header ===================================
 
-Version	4.2
+Version	4.3
 
 # === Window ===================================
 
@@ -71,6 +71,10 @@ Steps shape       Sawtooth steps
 Increment         8         µm    
 Stab shape        Linear          
 Stab ratio        50        %     
+
+# === Commands =================================
+
+matlab	disp('---Running---');	0
 
 # === Signals ==================================
 

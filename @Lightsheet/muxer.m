@@ -308,6 +308,7 @@ switch state
     
     case 'Run'
         
+        % --- Signals
         for i = 1:this.NDS
             
             % Stimuli times
@@ -332,6 +333,21 @@ switch state
             end
             
         end
+        
+        % --- Commands
+
+        I = [this.Commands(:).Time] >= t1 & [this.Commands(:).Time] < t2;
+        if any(I)
+           for i = find(I)
+               switch this.Commands(i).Target
+                   case 'matlab'
+                       eval(this.Commands(i).Command);
+                   
+               end
+           end
+        end
+            
+        
 end
 
 % FORCE STIM
