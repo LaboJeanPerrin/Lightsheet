@@ -214,17 +214,17 @@ else
                 
             else
                 
-                 Tw = this.Waveforms.Camera.NSamples*dt;
-                 Tw1 = mod(t1, Tw);
-                 Tw2 = mod(Tw1 + this.BlockSize*dt, Tw);
-                    
-                 i1 = round(Tw1/dt)+1;
-                 i2 = round(Tw2/dt);
+                Tw = this.Waveforms.Camera.NSamples*dt;
+                Tw1 = mod(t1, Tw);
+                Tw2 = mod(Tw1 + this.BlockSize*dt, Tw);
+                
+                i1 = round(Tw1/dt)+1;
+                i2 = round(Tw2/dt);
                 
                 if Tw2>Tw1
                     
                     Cam = this.Waveforms.Camera.data(i1:i2)';
-                                        
+                    
                 else
                     Cam = [this.Waveforms.Camera.data(i1:end) this.Waveforms.Camera.data(1:i2)]';
                 end
@@ -272,17 +272,17 @@ else
                 
             else
                 
-                 Tw = this.Waveforms.Shutter.NSamples*dt;
-                 Tw1 = mod(t1, Tw);
-                 Tw2 = mod(Tw1 + this.BlockSize*dt, Tw);
-                    
-                 i1 = round(Tw1/dt)+1;
-                 i2 = round(Tw2/dt);
+                Tw = this.Waveforms.Shutter.NSamples*dt;
+                Tw1 = mod(t1, Tw);
+                Tw2 = mod(Tw1 + this.BlockSize*dt, Tw);
+                
+                i1 = round(Tw1/dt)+1;
+                i2 = round(Tw2/dt);
                 
                 if Tw2>Tw1
                     
                     Sh = this.Waveforms.Shutter.data(i1:i2)';
-                                        
+                    
                 else
                     Sh = [this.Waveforms.Shutter.data(i1:end) this.Waveforms.Shutter.data(1:i2)]';
                 end
@@ -335,18 +335,19 @@ switch state
         end
         
         % --- Commands
-
-        I = [this.Commands(:).Time] >= t1 & [this.Commands(:).Time] < t2;
-        if any(I)
-           for i = find(I)
-               switch this.Commands(i).Target
-                   case 'matlab'
-                       eval(this.Commands(i).Command);
-                   
-               end
-           end
+        
+        if ~isempty(this.Commands)
+            I = [this.Commands(:).Time] >= t1 & [this.Commands(:).Time] < t2;
+            if any(I)
+                for i = find(I)
+                    switch this.Commands(i).Target
+                        case 'matlab'
+                            eval(this.Commands(i).Command);
+                            
+                    end
+                end
+            end
         end
-            
         
 end
 
