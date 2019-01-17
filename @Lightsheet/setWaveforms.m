@@ -71,7 +71,7 @@ if ismember(in.tag, {'NLayers', 'All'})
 end
 
 % --- Set increments
-if ismember(in.tag, {'Height', 'NLayers', 'StepsShape'})
+if ismember(in.tag, {'Height', 'NLayers'})
     
     NLayers = str2double(get(this.UI.NLayers, 'String'));
     Increment = str2double(get(this.UI.Increment, 'String'));
