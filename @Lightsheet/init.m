@@ -25,11 +25,11 @@ this.Channels(1).Type = 'AO';
 this.Channels(1).Channel = 0;
 this.Channels(1).Range = [-5 5];
 
-% Vertical Mirror
+% Vertical Mirror is actually a piezo
 this.Channels(2).Name = 'VM';
 this.Channels(2).Type = 'AO';
 this.Channels(2).Channel = 1;
-this.Channels(2).Range = [-5 5];
+this.Channels(2).Range = [-10 10];
 
 % Objective Piezo
 this.Channels(3).Name = 'OP';
