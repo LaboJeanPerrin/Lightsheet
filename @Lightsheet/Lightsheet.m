@@ -30,6 +30,11 @@ classdef Lightsheet < handle
         
     end
     
+    events
+        DMDinit
+        DMDtrigNext
+    end
+    
     methods
         
         % --- Constructor -------------------------------------------------
