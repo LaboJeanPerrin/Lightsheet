@@ -19,7 +19,7 @@ end
 % === Checks ==============================================================
 
 % From NLayers, Exposure, Delay or DelayLong: set cycle time
-if ismember(in.tag, {'NLayers', 'Exposure', 'Delay', 'DelayLong', 'All'})
+if ismember(in.tag, {'NLayers', 'Exposure', 'Delay', 'DelayLong', 'StepsShape', 'All'})
     
     NLayers = str2double(get(this.UI.NLayers, 'String'));
     Exposure = str2double(get(this.UI.Exposure, 'String'));

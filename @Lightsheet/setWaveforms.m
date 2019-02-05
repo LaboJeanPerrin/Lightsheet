@@ -71,7 +71,7 @@ if ismember(in.tag, {'NLayers', 'All'})
 end
 
 % --- Set increments
-if ismember(in.tag, {'Height'})
+if ismember(in.tag, {'Height', 'NLayers'})
     
     NLayers = str2double(get(this.UI.NLayers, 'String'));
     Increment = str2double(get(this.UI.Increment, 'String'));
@@ -98,13 +98,13 @@ if ismember(in.tag, {'Delay', 'DelayLong', 'All'})
     Delay = str2double(get(this.UI.Delay, 'String'))/1000;
     DelayLong = str2double(get(this.UI.DelayLong, 'String'))/1000;
     
-    if DelayLong<Delay
+    if DelayLong<Delay || ismember(StepsShape, {'Triangle'})
         DelayLong = Delay;
-        set(this.UI.DelayLong, 'String', num2str(DelayLong));
+        set(this.UI.DelayLong, 'String', num2str(DelayLong*1000));
     end
     
 end
-
+    
 % --- Coerce stabilization ratio
 if ismember(in.tag, {'StabRatio', 'All'})
     
@@ -115,14 +115,6 @@ if ismember(in.tag, {'StabRatio', 'All'})
     elseif Ratio>1
         set(this.UI.StabRatio, 'String', '100');
     end
-    
-end
-
-% --- Update timing
-if ismember(in.tag, {'NLayers', 'Exposure', 'Delay', 'DelayLong', 'All'})
-    
-    % Update timing
-    this.setTiming('tag', in.tag);
     
 end
 
@@ -153,7 +145,16 @@ switch StepsShape
         set(this.UI.StabRatio, 'Enable', 'off');
         set(this.UI.DelayLong, 'Enable', 'off');
 
+        set(this.UI.DelayLong, 'String', get(this.UI.Delay, 'String'));
         
+end
+
+% --- Update timing
+if ismember(in.tag, {'NLayers', 'Exposure', 'Delay', 'DelayLong', 'StepsShape', 'All'})
+    
+    % Update timing
+    this.setTiming('tag', in.tag);
+    
 end
 
 % === Waveform generation =================================================

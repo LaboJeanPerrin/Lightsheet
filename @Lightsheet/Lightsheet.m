@@ -23,6 +23,7 @@ classdef Lightsheet < handle
                 
         Run = [];
         Parameters
+        Commands
         Signals
         
         vi = [];
