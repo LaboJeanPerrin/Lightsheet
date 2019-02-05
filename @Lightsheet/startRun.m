@@ -23,11 +23,17 @@ if get(this.UI.Run, 'Value')
     
     % Check vi state
     if ~isempty(this.vi)
-        this.vi.SetControlValue('Trig', true);
+        this.UpdateVI
+        this.vi.SetControlValue('Trig', 'true');
     end
     
-else
     
+        
+    
+else
+     if ~isempty(this.vi)
+        this.vi.SetControlValue('Trig', 'false');
+    end
     % --- Log run stop
     this.log('RUN STOP');
     

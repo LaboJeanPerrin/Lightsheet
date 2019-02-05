@@ -23,13 +23,13 @@ this.Channels = struct('Type', {}, 'Channel', {}, 'Range', {}, 'Name', {});
 this.Channels(1).Name = 'HM';
 this.Channels(1).Type = 'AO';
 this.Channels(1).Channel = 0;
-this.Channels(1).Range = [-5 5];
+this.Channels(1).Range = [-10 10];
 
 % Vertical Mirror
 this.Channels(2).Name = 'VM';
 this.Channels(2).Type = 'AO';
 this.Channels(2).Channel = 1;
-this.Channels(2).Range = [-5 5];
+this.Channels(2).Range = [-10 10];
 
 % Objective Piezo
 this.Channels(3).Name = 'OP';

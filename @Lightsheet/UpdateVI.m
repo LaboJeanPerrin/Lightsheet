@@ -9,3 +9,16 @@ this.vi.SetControlValue('Root path', get(this.UI.Root, 'string'));
 tmp = get(this.UI.Study, 'string');
 this.vi.SetControlValue('Study', tmp{get(this.UI.Study, 'value')});
 this.vi.SetControlValue('Date', get(this.UI.Date, 'string'));
+
+
+
+% --- Path
+slist = get(this.UI.Study, 'String');
+path = [get(this.UI.Root, 'String')  ...
+    slist{get(this.UI.Study, 'Value')} filesep ...
+    get(this.UI.Date, 'String') filesep ... 
+    this.Run.Name];
+
+this.vi.SetControlValue('Path', path);
+
+
