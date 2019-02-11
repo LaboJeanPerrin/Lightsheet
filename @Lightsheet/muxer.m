@@ -51,23 +51,23 @@ if t1<0, state = 'Idle'; end
 
 % === HORIZONTAL MIRROR ===================================================
 
-switch state
+switch this.UI.HM_Scan.Value % state
     
-    case 'Idle'
+    case 0 % 'Idle'
         
         HM = linspace(this.Memory.HM, HMPos, this.BlockSize)';
         
-    case {'Scan', 'Run'}
+    case 1 % {'Scan', 'Run'}
         
         dt = this.Waveforms.Horizontal.dt;
-        
+
         Tw = this.Waveforms.Horizontal.NSamples*dt;
         Tw1 = mod(t1, Tw);
         Tw2 = mod(Tw1 + this.BlockSize*dt, Tw);
-        
+
         i1 = round(Tw1/dt)+1;
         i2 = round(Tw2/dt);
-        
+
         if Tw2>Tw1
             HM = this.Waveforms.Horizontal.data(i1:i2)';
         else
@@ -141,6 +141,11 @@ else
                     
                 end
             end
+    end
+    
+    % prevent moving if not locked
+    if ~this.UI.Lock.Value
+        VM = linspace(this.Memory.VM, VMPos, this.BlockSize)';
     end
 end
 
