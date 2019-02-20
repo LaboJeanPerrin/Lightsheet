@@ -28,7 +28,5 @@ this.Run.Path = [get(this.UI.Root, 'String') filesep ...
     this.Run.Name];
 
 if ~isempty(this.vi)
-    
     this.vi.SetControlValue('Run selected', this.Run.Name );
-    
 end

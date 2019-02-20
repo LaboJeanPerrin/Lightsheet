@@ -142,8 +142,8 @@ switch this.Parameters.Version
         
         % --- StepsShape
         
-        if ~isempty(this.Parameters.NLayers)
-            set(this.UI.NLayers, 'String', this.Parameters.NLayers);
+        if ~isempty(this.Parameters.N)
+            set(this.UI.StepsShape.String, 'String', this.Parameters.StepsShape);
         end
         
         % --- Exposition
@@ -162,6 +162,12 @@ switch this.Parameters.Version
         
         if ~isempty(this.Parameters.DelayLong)
             set(this.UI.DelayLong, 'String', this.Parameters.DelayLong);
+        end
+        
+        % --- StepsShape
+        
+        if ~isempty(this.Parameters.StepsShape)
+            set(this.UI.StepsShape.String, 'String', this.Parameters.StepsShape);
         end
 
         % --- Signals -----------------------------------------------------
