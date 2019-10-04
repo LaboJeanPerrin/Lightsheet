@@ -11,6 +11,7 @@ if isempty(Nb), Nb = 0; end
 % --- Get block number
 N = this.Session.ScansOutputByHardware;
 
+
 % --- First buffer
 if ~N
     out = zeros(this.BlockSize*2, 5+this.NDS);
@@ -31,8 +32,10 @@ end
 
 % --- Definitions
 BlockTime = this.BlockSize/this.Rate;
-Nb = Nb + 1;
-t1 = Nb*BlockTime - this.Reference;
+Nb = Nb + 1;   %   % number of executed blocks since initialitation
+t1 = Nb*BlockTime - this.Reference;  % this.Referenc = elapsed time between daq initialitation and last run buttom click
+
+
 t2 = t1 + BlockTime;
 
 % Positions
@@ -211,33 +214,44 @@ else
             
             Cam = zeros(this.BlockSize, 1);
             
+            
         case 'Run'
             
-            if t1 == this.Waveforms.Vertical.CycleTime*NCycles
-                
+           % if t1 == this.Waveforms.Vertical.CycleTime*NCycles  % time of waveform executed =  number of Blocks send * BlockTime
+            if t1+this.BlockSize*dt >= this.Waveforms.Vertical.CycleTime*NCycles
+     
                 Cam = zeros(this.BlockSize, 1);
-                
+                Tw = this.Waveforms.Camera.NSamples*dt;  % time of one cycle
+                Tw1 = mod(t1, Tw);  % executed time of current cycle
+                Tw2 = mod(this.Waveforms.Vertical.CycleTime*NCycles, Tw);
+                i1 = round(Tw1/dt)+1;
+                i2 = round(Tw2/dt);   
+                Cam(1: length(this.Waveforms.Camera.data(i1:end)) ) = this.Waveforms.Camera.data(i1:end)';
+                Cam(end-10:end) = 1;
+                        
             else
                 
-                 Tw = this.Waveforms.Camera.NSamples*dt;
-                 Tw1 = mod(t1, Tw);
-                 Tw2 = mod(Tw1 + this.BlockSize*dt, Tw);
-                    
+                 Tw = this.Waveforms.Camera.NSamples*dt;  % time of one cycle
+                 Tw1 = mod(t1, Tw);  % executed time of current cycle
+                 Tw2 = mod(Tw1 + this.BlockSize*dt, Tw); % executed time of cycle with the next blocksize 
+                 
                  i1 = round(Tw1/dt)+1;
-                 i2 = round(Tw2/dt);
+                 i2 = round(Tw2/dt);   
                 
-                if Tw2>Tw1
+                if Tw2>Tw1   % with the new blocksize we are still in the current cycle
                     
                     Cam = this.Waveforms.Camera.data(i1:i2)';
                                         
-                else
+                else   % with the new block we finish the current cycle and start the new cycle
                     Cam = [this.Waveforms.Camera.data(i1:end) this.Waveforms.Camera.data(1:i2)]';
                 end
-                
+
                 % End of Run
                 if numel(Cam)<this.BlockSize
                     Cam = [Cam ; zeros(this.BlockSize-numel(Cam),1)];
                 end
+                
+             
                 
             end
     end
