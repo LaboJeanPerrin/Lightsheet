@@ -14,7 +14,7 @@ N = this.Session.ScansOutputByHardware;
 
 % --- First buffer
 if ~N
-    out = zeros(this.BlockSize*2, 5+this.NDS);
+    out = zeros(this.BlockSize*2, 6+this.NDS);
     Nb = 0;
     return
 end
@@ -23,7 +23,7 @@ end
 try
     if get(this.UI.Error, 'Value')
         set(this.UI.Error, 'Value', false);
-        out = zeros(this.BlockSize, 5+this.NDS);
+        out = zeros(this.BlockSize, 6+this.NDS);
         pause(this.BlockSize/this.Rate);
         return
     end
@@ -367,6 +367,15 @@ if get(this.UI.Stim_2, 'Value')
 end
 
 
+% === Run trig =====================================================
+
+RT = zeros(this.BlockSize, 1);
+
+if get(this.UI.Run, 'Value')
+    tmp = ones(this.BlockSize, 1);
+   % tmp(end) = 1;
+    RT = tmp;
+end
 % === CORRECTIONS =========================================================
 
 % --- Get vertical correction
@@ -390,6 +399,7 @@ this.Memory.VM = VM(end);
 this.Memory.OP = OP(end);
 this.Memory.Cam = Cam(end);
 this.Memory.Sh = Sh(end);
+this.Memory.RT = RT(end);
 this.Memory.DS = DS(end,:);
 this.Memory.vCorr = vCorr;
 
@@ -409,14 +419,15 @@ OP_um2V = str2double(get(this.UI.OP_um2V, 'String'));
 % fprintf('%s - %i - %f - %.01fms\n', state, Nb, t1, toc*1000);
 
 try
-    out = [HM/HM_um2V (VM+VC)/VM_um2V (OP+VC)/OP_um2V Cam Sh DS];
-catch ME
+    out = [HM/HM_um2V (VM+VC)/VM_um2V (OP+VC)/OP_um2V Cam Sh RT DS  ];
+    catch ME
     
     fprintf('Size of HM: %i, %i\n', size(HM));
     fprintf('Size of VM: %i, %i\n', size(VM));
     fprintf('Size of OP: %i, %i\n', size(OP));
     fprintf('Size of Cam: %i, %i\n', size(Cam));
     fprintf('Size of Sh: %i, %i\n', size(Sh));
+    fprintf('Size of Sh: %i, %i\n', size(RT));
     fprintf('Size of Sh: %i, %i\n', size(DS));
     
     rethrow(ME);

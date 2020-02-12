@@ -47,16 +47,23 @@ this.Channels(5).Name = 'Shutter';
 this.Channels(5).Type = 'DO';
 this.Channels(5).Channel = 'Port0/Line8';
 
+% Run trig
+this.Channels(6).Name = 'RunTrig';
+this.Channels(6).Type = 'DO';
+this.Channels(6).Channel = 'Port0/Line4';
+
 % Digital stimuli
 if this.NDS
-    this.Channels(6).Type = 'DO';
+    this.Channels(7).Type = 'DO';
     if this.NDS==1
-        this.Channels(6).Channel = 'Port0/Line2';
+        this.Channels(7).Channel = 'Port0/Line2';
     else
-        this.Channels(6).Channel = ['Port0/Line2:' num2str(this.NDS+1)];
+        this.Channels(7).Channel = ['Port0/Line2:' num2str(this.NDS+1)];
     end
-    this.Channels(6).Name = 'Digital Stimuli';
+    this.Channels(7).Name = 'Digital Stimuli';
 end
+
+
 
 if isa(this.Session, 'ni.daq.Device') || isa(this.Session, 'daq.ni.Session')
     
