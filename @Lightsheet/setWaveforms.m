@@ -408,10 +408,12 @@ this.Waveforms.Shutter = struct('dt', dt, ...
 
 tmp = [];
 
+% Build camera waveform for one brain scan minus the last layer
 for j = 1:Nlayers-1
     tmp = [tmp ones(1,round(Exposure/dt)) zeros(1,round(Delay/dt))];
 end
 
+% add the last layer exposure + the delay selected after one brain scan 
 if strcmp(get(this.UI.DelayLong, 'Enable'), 'on')
     tmp = [tmp ones(1,round(Exposure/dt)) zeros(1,round(DelayLong/dt))];
 else

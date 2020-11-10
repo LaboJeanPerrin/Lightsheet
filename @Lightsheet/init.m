@@ -68,10 +68,10 @@ if isa(this.Session, 'ni.daq.Device') || isa(this.Session, 'daq.ni.Session')
     for i = 1:numel(this.Channels)
         switch this.Channels(i).Type
             case 'AO'
-                addAnalogOutputChannel(this.Session, this.Device, this.Channels(i).Channel, 'Voltage');
+                addAnalogOutputChannel(this.Session, 'cDAQ1Mod1', this.Channels(i).Channel, 'Voltage');
                 this.Session.Channels(i).Range = this.Channels(i).Range;
             case 'DO'
-                addDigitalChannel(this.Session, this.Device, this.Channels(i).Channel, 'OutputOnly');
+                addDigitalChannel(this.Session, 'cDAQ1Mod2', this.Channels(i).Channel, 'OutputOnly');
         end
         this.Session.Channels(i).Name = this.Channels(i).Name;
     end
