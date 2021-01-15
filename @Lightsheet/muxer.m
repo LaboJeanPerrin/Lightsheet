@@ -373,8 +373,11 @@ RT = zeros(this.BlockSize, 1);
 
 if get(this.UI.Run, 'Value')
     tmp = ones(this.BlockSize, 1);
-   % tmp(end) = 1;
-    RT = tmp;
+    tmp = reshape(tmp, size(tmp,1)/10, 10);
+    tmp1 = tmp(1:size(tmp,1)/2,:);
+    tmp0 = tmp1*0;
+    tmp2 = cat(1,tmp0', tmp1');
+    RT = tmp2(:);
 end
 % === CORRECTIONS =========================================================
 
