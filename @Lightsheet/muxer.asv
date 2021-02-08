@@ -1,0 +1,449 @@
+function out = muxer(this, varargin)
+
+% Start timer
+tic
+
+% === INITIALIZATION ======================================================
+
+persistent Nb;
+if isempty(Nb), Nb = 0; end
+
+% --- Get block number
+N = this.Session.ScansOutputByHardware;
+
+
+% --- First buffer
+if ~N
+    out = zeros(this.BlockSize*2, 5+this.NDS);
+    Nb = 0;
+    return
+end
+
+% --- ERROR
+try
+    if get(this.UI.Error, 'Value')
+        set(this.UI.Error, 'Value', false);
+        out = zeros(this.BlockSize, 5+this.NDS);
+        pause(this.BlockSize/this.Rate);
+        return
+    end
+catch
+end
+
+% --- Definitions
+BlockTime = this.BlockSize/this.Rate;
+Nb = Nb + 1;   %   % number of executed blocks since initialitation
+t1 = Nb*BlockTime - this.Reference;  % this.Referenc = elapsed time between daq initialitation and last run buttom click
+
+
+t2 = t1 + BlockTime;
+
+% Positions
+HMPos = str2double(get(this.UI.HM_Position, 'String'));
+VMPos = str2double(get(this.UI.VM_Position, 'String'));
+OPPos = str2double(get(this.UI.OP_Position, 'String'));
+
+% Corrections
+CriticalLayer = str2double(get(this.UI.CriticalLayer,'string'));
+HMoffset = str2double(get(this.UI.HMoffset,'string'));
+
+% --- Get status
+state = this.Status;
+if strcmp(this.Status, 'Idle') && get(this.UI.HM_Scan, 'Value')
+    state = 'Scan';
+end
+
+% Initialization shift
+if t1<0, state = 'Idle'; end
+
+% === HORIZONTAL MIRROR ===================================================
+
+switch this.UI.HM_Scan.Value % state
+    
+    case 0 % 'Idle'
+            HM = linspace(this.Memory.HM, HMPos, this.BlockSize)';
+    
+    case 1 % {'Scan', 'Run'}
+        
+        dt = this.Waveforms.Horizontal.dt;
+
+        Tw = this.Waveforms.Horizontal.NSamples*dt;
+        Tw1 = mod(t1, Tw);
+        Tw2 = mod(Tw1 + this.BlockSize*dt, Tw);
+
+        i1 = round(Tw1/dt)+1;
+        i2 = round(Tw2/dt);
+        
+        if this.Memory.OP > CriticalLayer
+            offset = HMoffset;
+        end
+        
+        if Tw2>Tw1
+            HM = this.Waveforms.Horizontal.data(i1:i2)'+offset;
+        else
+            HM = [this.Waveforms.Horizontal.data(i1:end) this.Waveforms.Horizontal.data(1:i2)]'+offset;
+        end
+        
+end
+
+% === VERTICAL MIRROR =====================================================
+
+if t1<0
+    
+    % This may happen once when the reference is reset.
+    % In this case, let's just wait for the next block.
+    VM = VMPos*ones(this.BlockSize, 1);
+    
+else
+    
+    switch state
+        
+        case {'Idle', 'Scan'}
+            
+            VM = linspace(this.Memory.VM, VMPos, this.BlockSize)';
+            
+        case 'Run'
+            
+            % Number of layers
+            NLayers = str2double(get(this.UI.NLayers, 'Value'));
+            
+            if NLayers==1
+                
+                VM = VMPos*ones(this.BlockSize, 1);
+                
+            else
+                
+                dt = this.Waveforms.Vertical.dt;
+                NCycles = str2double(get(this.UI.NCycles, 'String'));
+                
+                if t1 == this.Waveforms.Vertical.CycleTime*NCycles
+                    
+                    set(this.UI.Run, 'Value', false);
+                    this.startRun();
+                    VM = VMPos*ones(this.BlockSize, 1);
+                    
+                else
+                    
+                    Tw = this.Waveforms.Vertical.NSamples*dt;
+                    Tw1 = mod(t1, Tw);
+                    Tw2 = mod(Tw1 + this.BlockSize*dt, Tw);
+                    
+                    % End of run
+                    if t1+this.BlockSize*dt >= this.Waveforms.Vertical.CycleTime*NCycles
+                        set(this.UI.Run, 'Value', false);
+                        this.startRun();
+                        Tw2 = mod(this.Waveforms.Vertical.CycleTime*NCycles, Tw);
+                    end
+                    
+                    i1 = round(Tw1/dt)+1;
+                    i2 = round(Tw2/dt);
+                    
+                    if Tw2>Tw1
+                        VM = VMPos + this.Waveforms.Vertical.data(i1:i2)';
+                    else
+                        VM = VMPos + [this.Waveforms.Vertical.data(i1:end) this.Waveforms.Vertical.data(1:i2)]';
+                    end
+                    
+                    % End of Run
+                    if numel(VM)<this.BlockSize
+                        VM = [VM ; VMPos*ones(this.BlockSize-numel(VM),1)];
+                    end
+                    
+                end
+            end
+    end
+    
+    % prevent moving if not locked
+    if ~this.UI.Lock.Value
+        VM = linspace(this.Memory.VM, VMPos, this.BlockSize)';
+    end
+end
+
+% === OBJECTIVE PIEZO =====================================================
+
+if t1<0
+    
+    % This may happen once when the reference is reset.
+    % In this case, let's just wait for the next block.
+    OP = OPPos*ones(this.BlockSize, 1);
+    
+else
+    
+    switch state
+        
+        case {'Idle', 'Scan'}
+            
+            OP = linspace(this.Memory.OP, OPPos, this.BlockSize)';
+            
+        case 'Run'
+            
+            if NLayers==1
+                
+                OP = OPPos*ones(this.BlockSize, 1);
+                
+            else
+                
+                if t1 == this.Waveforms.Vertical.CycleTime*NCycles
+                    
+                    OP = OPPos*ones(this.BlockSize, 1);
+                    
+                else
+                    
+                    if Tw2>Tw1
+                        OP = OPPos + this.Waveforms.Vertical.data(i1:i2)';
+                    else
+                        OP = OPPos + [this.Waveforms.Vertical.data(i1:end) this.Waveforms.Vertical.data(1:i2)]';
+                    end
+                    
+                    % End of Run
+                    if numel(OP)<this.BlockSize
+                        OP = [OP ; OPPos*ones(this.BlockSize-numel(OP),1)];
+                    end
+                    
+                end
+            end
+    end
+end
+
+% === CAMERA ==============================================================
+
+if t1<0
+    
+    % This may happen once when the reference is reset.
+    % In this case, let's just wait for the next block.
+    Cam = zeros(this.BlockSize, 1);
+    
+else
+    
+    switch state
+        
+        case {'Idle', 'Scan'}
+            
+            Cam = zeros(this.BlockSize, 1);
+            
+            
+        case 'Run'
+            
+           % if t1 == this.Waveforms.Vertical.CycleTime*NCycles  % time of waveform executed =  number of Blocks send * BlockTime
+            if t1+this.BlockSize*dt >= this.Waveforms.Vertical.CycleTime*NCycles
+     
+                Cam = zeros(this.BlockSize, 1);
+                Tw = this.Waveforms.Camera.NSamples*dt;  % time of one cycle
+                Tw1 = mod(t1, Tw);  % executed time of current cycle
+                Tw2 = mod(this.Waveforms.Vertical.CycleTime*NCycles, Tw);
+                i1 = round(Tw1/dt)+1;
+                i2 = round(Tw2/dt);   
+                Cam(1: length(this.Waveforms.Camera.data(i1:end)) ) = this.Waveforms.Camera.data(i1:end)';
+                Cam(end-10:end) = 1;
+                        
+            else
+                
+                 Tw = this.Waveforms.Camera.NSamples*dt;  % time of one cycle
+                 Tw1 = mod(t1, Tw);  % executed time of current cycle
+                 Tw2 = mod(Tw1 + this.BlockSize*dt, Tw); % executed time of cycle with the next blocksize 
+                 
+                 i1 = round(Tw1/dt)+1;
+                 i2 = round(Tw2/dt);   
+                
+                if Tw2>Tw1   % with the new blocksize we are still in the current cycle
+                    
+                    Cam = this.Waveforms.Camera.data(i1:i2)';
+                                        
+                else   % with the new block we finish the current cycle and start the new cycle
+                    Cam = [this.Waveforms.Camera.data(i1:end) this.Waveforms.Camera.data(1:i2)]';
+                end
+
+                % End of Run
+                if numel(Cam)<this.BlockSize
+                    Cam = [Cam ; zeros(this.BlockSize-numel(Cam),1)];
+                end
+                
+             
+                
+            end
+    end
+end
+
+% === SHUTTER =============================================================
+
+if t1<0
+    
+    % This may happen once when the reference is reset.
+    % In this case, let's just wait for the next block.
+    Sh = zeros(this.BlockSize, 1);
+    
+else
+    
+    switch state
+        
+        case {'Idle', 'Scan'}
+            
+            if get(this.UI.Shutter, 'Value')
+                Sh = ones(this.BlockSize, 1);
+                Sh(end) = 0;
+            else
+                Sh = zeros(this.BlockSize, 1);
+            end
+            
+        case 'Run'
+            
+            if t1 == this.Waveforms.Vertical.CycleTime*NCycles
+                
+                if get(this.UI.Shutter, 'Value')
+                    Sh = ones(this.BlockSize, 1);
+                    Sh(end) = 0;
+                else
+                    Sh = zeros(this.BlockSize, 1);
+                end
+                
+            else
+                
+                Tw = this.Waveforms.Shutter.NSamples*dt;
+                Tw1 = mod(t1, Tw);
+                Tw2 = mod(Tw1 + this.BlockSize*dt, Tw);
+                
+                i1 = round(Tw1/dt)+1;
+                i2 = round(Tw2/dt);
+                
+                if Tw2>Tw1
+                    
+                    Sh = this.Waveforms.Shutter.data(i1:i2)';
+                    
+                else
+                    Sh = [this.Waveforms.Shutter.data(i1:end) this.Waveforms.Shutter.data(1:i2)]';
+                end
+                
+                % End of Run
+                if numel(Sh)<this.BlockSize
+                    Sh = [Sh ; zeros(this.BlockSize-numel(Sh),1)];
+                end
+                
+            end
+    end
+end
+
+% === DIGITAL STIMULI =====================================================
+
+% Default states
+DS = NaN(this.BlockSize, this.NDS);
+for i = 1:this.NDS
+    DS(:,i) = double(this.Signals.DS(i).default);
+end
+
+switch state
+    
+    case 'Run'
+        
+        % --- Signals
+        for i = 1:this.NDS
+            
+            % Stimuli times
+            ts = this.Signals.DS(i).tstart;
+            tf = this.Signals.DS(i).tstop;
+            d = double(this.Signals.DS(i).default);
+            
+            % Initial state
+            DS(:,i) = d;
+            
+            % Conditions
+            C1 = ts>=t1 & tf<=t2;
+            C2 = ts<=t1 & tf>=t1 & tf<=t2;
+            C3 = ts>=t1 & ts<=t2 & tf>=t2;
+            C4 = ts<=t1 & tf>=t2;
+            I = find(C1 | C2 | C3 | C4,  1, 'first');
+            
+            if ~isempty(I)
+                i1 = max(1, round((ts(I)-t1)*this.Rate));
+                i2 = min(round((tf(I)-t1)*this.Rate), this.BlockSize);
+                DS(i1:i2,i) = 1-d;
+            end
+            
+        end
+        
+        % --- Commands
+        
+        if ~isempty(this.Commands)
+            I = [this.Commands(:).Time] >= t1 & [this.Commands(:).Time] < t2;
+            if any(I)
+                for i = find(I)
+                    switch this.Commands(i).Target
+                        case 'matlab'
+                            eval(this.Commands(i).Command);
+                            
+                    end
+                end
+            end
+        end
+        
+end
+
+% FORCE STIM
+if get(this.UI.Stim_1, 'Value')
+    tmp = ones(this.BlockSize, 1);
+    tmp(end) = 0;
+    DS(:,1) = tmp;
+end
+
+if get(this.UI.Stim_2, 'Value')
+    tmp = ones(this.BlockSize, 1);
+    tmp(end) = 0;
+    DS(:,2) = tmp;
+end
+
+
+% === CORRECTIONS =========================================================
+
+% --- Get vertical correction
+if ~isempty(this.vi)
+    vCorr = this.vi.GetControlValue('VertCorrection');
+else
+    vCorr = 0;
+end
+
+% Update display
+set(this.UI.CorrVert, 'string', num2str(vCorr, '%.02f'));
+
+% --- Apply vertical correction
+VC = linspace(this.Memory.vCorr, vCorr, this.BlockSize)';
+
+% === FINALIZATION ========================================================
+
+% --- Update memory
+this.Memory.HM = HM(end);
+this.Memory.VM = VM(end);
+this.Memory.OP = OP(end);
+this.Memory.Cam = Cam(end);
+this.Memory.Sh = Sh(end);
+this.Memory.DS = DS(end,:);
+this.Memory.vCorr = vCorr;
+
+% --- Vertical mirror inversion
+if get(this.UI.VM_Invert, 'Value')
+    pmax = str2double(get(this.UI.VM_Position_max, 'String'));
+    VM = pmax - VM;
+end
+
+% --- Output Waveforms
+
+% Conversion coefficients
+HM_um2V = str2double(get(this.UI.HM_um2V, 'String'));
+VM_um2V = str2double(get(this.UI.VM_um2V, 'String'));
+OP_um2V = str2double(get(this.UI.OP_um2V, 'String'));
+
+% fprintf('%s - %i - %f - %.01fms\n', state, Nb, t1, toc*1000);
+
+try
+    out = [HM/HM_um2V (VM+VC)/VM_um2V (OP+VC)/OP_um2V Cam Sh DS];
+catch ME
+    
+    fprintf('Size of HM: %i, %i\n', size(HM));
+    fprintf('Size of VM: %i, %i\n', size(VM));
+    fprintf('Size of OP: %i, %i\n', size(OP));
+    fprintf('Size of Cam: %i, %i\n', size(Cam));
+    fprintf('Size of Sh: %i, %i\n', size(Sh));
+    fprintf('Size of Sh: %i, %i\n', size(DS));
+    
+    rethrow(ME);
+end
+
+% fprintf('%i,%i - %.03f s\n', size(HM), toc);

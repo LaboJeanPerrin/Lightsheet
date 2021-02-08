@@ -43,6 +43,10 @@ HMPos = str2double(get(this.UI.HM_Position, 'String'));
 VMPos = str2double(get(this.UI.VM_Position, 'String'));
 OPPos = str2double(get(this.UI.OP_Position, 'String'));
 
+% Corrections
+CriticalHeight = str2double(get(this.UI.CriticalHeight,'string'));
+HMoffset = str2double(get(this.UI.HMoffset,'string'));
+
 % --- Get status
 state = this.Status;
 if strcmp(this.Status, 'Idle') && get(this.UI.HM_Scan, 'Value')
@@ -57,9 +61,8 @@ if t1<0, state = 'Idle'; end
 switch this.UI.HM_Scan.Value % state
     
     case 0 % 'Idle'
-        
-        HM = linspace(this.Memory.HM, HMPos, this.BlockSize)';
-        
+            HM = linspace(this.Memory.HM, HMPos, this.BlockSize)';
+    
     case 1 % {'Scan', 'Run'}
         
         dt = this.Waveforms.Horizontal.dt;
@@ -70,11 +73,18 @@ switch this.UI.HM_Scan.Value % state
 
         i1 = round(Tw1/dt)+1;
         i2 = round(Tw2/dt);
-
-        if Tw2>Tw1
-            HM = this.Waveforms.Horizontal.data(i1:i2)';
+        
+        
+        if this.Memory.OP > CriticalHeight  
+            offset = HMoffset;
         else
-            HM = [this.Waveforms.Horizontal.data(i1:end) this.Waveforms.Horizontal.data(1:i2)]';
+            offset = 0;
+        end
+        
+        if Tw2>Tw1
+            HM = this.Waveforms.Horizontal.data(i1:i2)'+offset;
+        else
+            HM = [this.Waveforms.Horizontal.data(i1:end) this.Waveforms.Horizontal.data(1:i2)]'+offset;
         end
         
 end
