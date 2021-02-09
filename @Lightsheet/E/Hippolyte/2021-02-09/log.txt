@@ -1,0 +1,15 @@
+
+14:23:34 - Close DAQ session
+14:23:34 - Close Main window
+14:24:27 - ERROR
+	nidaq:ni:DataMissedAO
+	Analog Output underflow event: Last valid output was scan number 3200000.
+14:24:27 - Close DAQ session
+14:33:48 - Close DAQ session
+14:33:48 - Close Main window
+14:36:57 - ERROR
+	nidaq:ni:DataMissedAO
+	Analog Output underflow event: Last valid output was scan number 5480000.
+14:36:57 - Close DAQ session
+14:38:48 - Close DAQ session
+14:38:48 - Close Main window

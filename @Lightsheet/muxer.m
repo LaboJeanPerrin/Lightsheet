@@ -152,6 +152,12 @@ else
     end
 end
 
+% ========== vertical mirror following the objective monitor signal
+%VM = ((8.1107-(-this.InputData(1)-2.44)))*42;% * ones(this.BlockSize,1);
+ 
+
+
+
 % === OBJECTIVE PIEZO =====================================================
 
 if t1<0

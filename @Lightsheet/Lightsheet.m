@@ -7,6 +7,7 @@ classdef Lightsheet < handle
         Device = 'Dev1';
         Rate = 100000;
         BlockSize
+        InputData
         Waveforms
         Memory
         Reference = 0;
@@ -49,6 +50,7 @@ classdef Lightsheet < handle
             % --- Define block size
 
             this.BlockSize = floor(this.Rate/10);
+            this.InputData = zeros(this.BlockSize,1);
 
             % --- Parameters ----------------------------------------------
             tmp = inputParser;

@@ -19,6 +19,11 @@ end
 % --- Channels
 this.Channels = struct('Type', {}, 'Channel', {}, 'Range', {}, 'Name', {});
 
+% Input 
+this.Channels(8).Name = 'IN';
+this.Channels(8).Type = 'AI';
+this.Channels(8).Channel = 0;
+
 % Horizontal mirror
 this.Channels(1).Name = 'HM';
 this.Channels(1).Type = 'AO';
@@ -74,7 +79,9 @@ if isa(this.Session, 'ni.daq.Device') || isa(this.Session, 'daq.ni.Session')
     % Assign channels
     for i = 1:numel(this.Channels)
         switch this.Channels(i).Type
-            case 'AO'
+             case 'AI'
+                addAnalogInputChannel(this.Session, this.Device, this.Channels(i).Channel, 'Voltage');
+             case 'AO'
                 addAnalogOutputChannel(this.Session, this.Device, this.Channels(i).Channel, 'Voltage');
                 this.Session.Channels(i).Range = this.Channels(i).Range;
             case 'DO'
