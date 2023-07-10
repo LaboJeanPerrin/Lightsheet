@@ -7,6 +7,7 @@ path = [get(this.UI.Root, 'String') filesep ...
     get(this.UI.Date, 'String')];
 
 D = dir(path);
+
 if isempty(D)
 %     warning('Lightsheet:EmptyDir', 'Empty directory.');
     return

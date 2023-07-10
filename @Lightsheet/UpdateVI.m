@@ -9,3 +9,6 @@ this.vi.SetControlValue('Root path', get(this.UI.Root, 'string'));
 tmp = get(this.UI.Study, 'string');
 this.vi.SetControlValue('Study', tmp{get(this.UI.Study, 'value')});
 this.vi.SetControlValue('Date', get(this.UI.Date, 'string'));
+if ~isempty(this.Run)
+    this.vi.SetControlValue('Run', this.Run.Name);
+end

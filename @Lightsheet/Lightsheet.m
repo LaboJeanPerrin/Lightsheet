@@ -43,7 +43,7 @@ classdef Lightsheet < handle
             % --- Cleanup the interface
             
             % Close existing occurences of Lightsheet
-            close all
+%             close all
             
             % Clear command window
             clc
@@ -71,7 +71,6 @@ classdef Lightsheet < handle
             % --- Parameters ----------------------------------------------
 
             this.Parameters = NT.Parameters;
-            
             ConfName = [prefdir filesep 'Lightsheet_Config.txt'];            
             if exist(ConfName, 'file')
                 this.loadParams(ConfName);
@@ -121,11 +120,13 @@ classdef Lightsheet < handle
             this.setPositions('tag', 'All');     
             this.setWaveforms('tag', 'StepsShape');
             this.setTiming('tag', 'All');
+            this.setStim('tag','All');%ADDED 27/06/2022
             
             % --- Initialize and start DAQ --------------------------------
 
             this.init;
             this.Memory = struct('HM', 0, 'VM', 0, 'OP', 0, 'Cam', 0, 'Sh', 0, 'DS', zeros(this.NDS,1), 'vCorr', 0);
+            %this.Memory = struct('HM', 0, 'VM', 0, 'OP', 0, 'Cam', 0, 'Sh', 0, 'DS', zeros(this.NDS,1), 'Acousto', 0, 'vCorr', 0); % ADDED 14/03/2022
             this.start;
             
         end

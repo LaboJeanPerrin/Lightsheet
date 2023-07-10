@@ -23,7 +23,7 @@ if get(this.UI.Run, 'Value')
     
     % Check vi state
     if ~isempty(this.vi)
-        this.vi.SetControlValue('Trig', true);
+        this.vi.SetControlValue('Runglobal', true);
     end
     
 else
@@ -33,6 +33,9 @@ else
     
     % --- Set status
     this.Status = 'Idle';
+    if ~isempty(this.vi)
+        this.vi.SetControlValue('Runglobal', false);
+    end    
     
 end
 

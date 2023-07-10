@@ -58,6 +58,11 @@ if this.NDS
     this.Channels(6).Name = 'Digital Stimuli';
 end
 
+% AOD ADDED 14/03/2022
+% this.Channels(7).Name = 'AOD';
+% this.Channels(7).Type = 'DO';
+% this.Channels(7).Channel = 'Port0/Line8';
+
 if isa(this.Session, 'ni.daq.Device') || isa(this.Session, 'daq.ni.Session')
     
     % --- Rate
@@ -79,6 +84,7 @@ if isa(this.Session, 'ni.daq.Device') || isa(this.Session, 'daq.ni.Session')
     % --- Misc settings
     this.Session.IsContinuous = true;
     this.Session.NotifyWhenScansQueuedBelow = this.BlockSize*2;
+   % status = daq.ni.NIDAQmx.DAQmxSetWriteRegenMode(this.Session, 10097); % test pour se débarrasser du bug
     
 end
 

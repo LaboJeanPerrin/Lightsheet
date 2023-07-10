@@ -14,6 +14,7 @@ N = this.Session.ScansOutputByHardware;
 % --- First buffer
 if ~N
     out = zeros(this.BlockSize*2, 5+this.NDS);
+    %out = zeros(this.BlockSize*2, 5+this.NDS+1);%14/03/2022
     Nb = 0;
     return
 end
@@ -23,6 +24,7 @@ try
     if get(this.UI.Error, 'Value')
         set(this.UI.Error, 'Value', false);
         out = zeros(this.BlockSize, 5+this.NDS);
+        %out = zeros(this.BlockSize, 5+this.NDS+1);%14/03/2022
         pause(this.BlockSize/this.Rate);
         return
     end
@@ -238,6 +240,7 @@ else
     end
 end
 
+
 % === SHUTTER =============================================================
 
 if t1<0
@@ -313,41 +316,70 @@ switch state
             
             % Stimuli times
             ts = this.Signals.DS(i).tstart;
+            disp(ts)
             tf = this.Signals.DS(i).tstop;
             d = double(this.Signals.DS(i).default);
-            
             % Initial state
             DS(:,i) = d;
             
+%             temp = ts(indice_temp);
+%             
+%             if temp == t1
+%                 indice_temp = indice_temp + 1;
+%                 DS(:,i) = 1;
+%             end
+            
+            
             % Conditions
-            C1 = ts>=t1 & tf<=t2;
-            C2 = ts<=t1 & tf>=t1 & tf<=t2;
-            C3 = ts>=t1 & ts<=t2 & tf>=t2;
-            C4 = ts<=t1 & tf>=t2;
-            I = find(C1 | C2 | C3 | C4,  1, 'first');
+%              C1 = ts>=t1 & tf<=t2;
+%              C2 = ts<=t1 & tf>=t1 & tf<=t2;
+%              C3 = ts>=t1 & ts<=t2 & tf>=t2;
+%              C4 = ts<=t1 & tf>=t2;
+%              I = find(C1 | C2 | C3 | C4,  1, 'first');
+%             
+%             if ~isempty(I)
+%                 i1 = max(1, round((ts(I)-t1)*this.Rate));
+%                 %i2 = min(round((tf(I)-t1)*this.Rate), this.BlockSize);
+%                 %i2 = min(round((tf(I)-t1)*this.Rate), i1+1);
+%                 i2 = i1 + 10;
+%                 DS(i1:i2,i) = 1-d;
+%             end
+
+            %%% ADDED 28/03/2022
+            trig_duration = 0.001; % trig duration for Karthala (1 ms). 
+            tf = ts + trig_duration; % tf = vector of stopping times of all stimulations
+            C1 = ts>=t1 & ts<t2;
+            C2 = tf>t1 & tf<(t1+trig_duration);
             
-            if ~isempty(I)
-                i1 = max(1, round((ts(I)-t1)*this.Rate));
-                i2 = min(round((tf(I)-t1)*this.Rate), this.BlockSize);
-                DS(i1:i2,i) = 1-d;
-            end
+            temp = find(C1 | C2);
             
-        end
-        
-        % --- Commands
-        
-        if ~isempty(this.Commands)
-            I = [this.Commands(:).Time] >= t1 & [this.Commands(:).Time] < t2;
-            if any(I)
-                for i = find(I)
-                    switch this.Commands(i).Target
-                        case 'matlab'
-                            eval(this.Commands(i).Command);
-                            
-                    end
+            if ~isempty(temp)
+                %disp(temp)
+                for ii = 1:length(temp)
+                    i1 = max(1,round((ts(temp(ii))-t1)*this.Rate));
+                    i2 = min(round((tf(temp(ii))-t1)*this.Rate),this.BlockSize);
+                    DS(i1:i2,1) = 1;
+                    %disp(i1)
+                    %disp(i2)
+                    %disp((ts(temp(ii))))
                 end
             end
         end
+        
+        %%% Commands
+        
+                if ~isempty(this.Commands)
+                    I = [this.Commands(:).Time] >= t1 & [this.Commands(:).Time] < t2;
+                    if any(I)
+                        for i = find(I)
+                            switch this.Commands(i).Target
+                                case 'matlab'
+                                    eval(this.Commands(i).Command);
+        
+                            end
+                        end
+                    end
+                end
         
 end
 
@@ -367,12 +399,14 @@ end
 
 % === CORRECTIONS =========================================================
 
-% --- Get vertical correction
-if ~isempty(this.vi)
-    vCorr = this.vi.GetControlValue('VertCorrection');
-else
-    vCorr = 0;
-end
+% % --- Get vertical correction // commented for debug of other VI call
+% if ~isempty(this.vi)
+%     vCorr = this.vi.GetControlValue('VertCorrection');
+% else
+%     vCorr = 0;
+% end
+
+vCorr = 0;
 
 % Update display
 set(this.UI.CorrVert, 'string', num2str(vCorr, '%.02f'));
@@ -415,7 +449,7 @@ catch ME
     fprintf('Size of OP: %i, %i\n', size(OP));
     fprintf('Size of Cam: %i, %i\n', size(Cam));
     fprintf('Size of Sh: %i, %i\n', size(Sh));
-    fprintf('Size of Sh: %i, %i\n', size(DS));
+    fprintf('Size of DS: %i, %i\n', size(DS));
     
     rethrow(ME);
 end

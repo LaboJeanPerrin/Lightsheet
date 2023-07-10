@@ -312,5 +312,6 @@ if get(this.UI.Lock, 'Value')
     
 end
 
+
 % Update OP_prev
 OP_prev = str2double(get(this.UI.OP_Position, 'String'));
