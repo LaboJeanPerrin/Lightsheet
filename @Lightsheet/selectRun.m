@@ -6,7 +6,7 @@ if isnumeric(varargin{1})
     id = varargin{1};
     
     % Set Run
-    this.Run = struct('Id', id, 'Name', ['Run ' num2str(id, '%02i')]);
+    this.Run = struct('Id', id, 'Name', ['Run' num2str(id, '%02i')]);
     
 else
 
